@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تارجت التيم - لوحة التحكم الشاملة</title>
+    <title>Team Productivity Pro</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -12,6 +12,7 @@
             --white: #ffffff;
             --green: #27ae60;
             --red: #c0392b;
+            --orange: #f39c12;
             --border: #dfe6e9;
         }
 
@@ -23,27 +24,12 @@
             color: #333;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
+        p { color: #7f8c8d; }
 
-        h1 {
-            color: var(--primary);
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        p {
-            color: #7f8c8d;
-        }
-
-        /* كروت الأقسام */
         .card {
             background: var(--white);
             border-radius: 12px;
@@ -63,20 +49,12 @@
             gap: 10px;
         }
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
+        .card-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
 
-        /* التحكم في التاريخ */
-        .date-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        /* أدوات التحكم والفلتر */
+        .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         
-        input[type="date"] {
+        input, select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -84,111 +62,51 @@
         }
 
         /* الجداول */
-        .table-responsive {
-            overflow-x: auto;
-        }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid var(--border); }
+        th { background-color: #f8f9fa; color: var(--primary); font-weight: 600; }
+        tr:hover { background-color: #fafafa; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: right;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background-color: #f8f9fa;
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* حقول الإدخال */
-        .input-mini {
-            width: 70px;
-            padding: 8px;
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .input-note {
-            width: 90%;
-            padding: 8px;
-            border: 1px solid #bdc3c7;
-            border-radius: 4px;
-        }
-
-        tr:hover {
-            background-color: #fafafa;
-        }
+        .input-mini { width: 70px; text-align: center; }
+        .input-note { width: 90%; }
 
         /* الأزرار */
-        .btn-save {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 100%;
-            margin-top: 20px;
-            transition: background 0.3s;
-        }
+        button { cursor: pointer; border: none; border-radius: 5px; padding: 8px 15px; font-family: inherit; transition: 0.3s; }
+        .btn-save { background-color: var(--primary); color: white; width: 100%; padding: 12px; margin-top: 20px; font-size: 1rem; }
+        .btn-save:hover { background-color: #1a252f; }
+        .btn-reset { background-color: var(--red); color: white; font-size: 0.9rem; }
+        .btn-filter { background-color: var(--accent); color: white; }
+        .btn-export { background-color: var(--green); color: white; }
+        
+        /* أيقونات الجدول */
+        .action-btn { padding: 4px 8px; font-size: 0.9rem; margin-left: 5px; }
+        .edit-btn { background-color: var(--orange); color: white; }
+        .del-btn { background-color: var(--red); color: white; }
 
-        .btn-save:hover {
-            background-color: #1a252f;
-        }
-
-        .btn-reset {
-            background-color: var(--red);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .btn-filter {
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .delete-icon {
-            color: var(--red);
-            cursor: pointer;
-            font-weight: bold;
-            border: 1px solid var(--red);
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-size: 0.8em;
-        }
-
-        /* بادجات الأداء */
-        .badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: white;
-            display: inline-block;
-            min-width: 60px;
-            text-align: center;
-        }
+        /* البادجات */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block; min-width: 60px; text-align: center; }
         .b-green { background: var(--green); }
         .b-red { background: var(--red); }
-        .b-orange { background: #f39c12; }
-
+        .b-orange { background: var(--orange); }
         .row-highlight { background-color: #e8f8f5; }
+
+        /* النافذة المنبثقة (Modal) للتعديل */
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 10px; width: 400px; max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; color: var(--primary); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
+        .form-group input { width: 100%; box-sizing: border-box; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -202,12 +120,11 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title">📝 إدخال بيانات اليوم</span>
-            <div class="date-control">
+            <div class="controls">
                 <label>التاريخ:</label>
                 <input type="date" id="currentDate">
             </div>
         </div>
-
         <div class="table-responsive">
             <table id="entryTable">
                 <thead>
@@ -215,53 +132,21 @@
                         <th>الاسم</th>
                         <th style="width: 100px;">ساعات</th>
                         <th style="width: 100px;">مكالمات</th>
-                        <th>ملاحظات (إذن، تدريب...)</th>
-                        <th>معاينة الحالة</th>
+                        <th>ملاحظات</th>
+                        <th>معاينة</th>
                     </tr>
                 </thead>
                 <tbody id="entryTableBody"></tbody>
             </table>
         </div>
-        
         <button class="btn-save" onclick="saveDailyData()">💾 حفظ بيانات اليوم</button>
     </div>
 
     <div class="card">
         <div class="card-header">
-            <span class="card-title">📅 سجل التفاصيل اليومية (الأرشيف)</span>
-            <div class="date-control">
-                <label>فلتر بالتاريخ:</label>
-                <input type="date" id="filterDate" onchange="renderHistoryTable()">
-                <button class="btn-filter" onclick="resetFilter()">عرض الكل</button>
-            </div>
-        </div>
-        
-        <div class="table-responsive">
-            <table id="historyTable">
-                <thead>
-                    <tr>
-                        <th>التاريخ</th>
-                        <th>الاسم</th>
-                        <th>ساعات</th>
-                        <th>مطلوب</th>
-                        <th>محقق</th>
-                        <th>النسبة</th>
-                        <th>الحالة</th>
-                        <th>ملاحظات</th>
-                        <th>حذف</th>
-                    </tr>
-                </thead>
-                <tbody id="historyBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
             <span class="card-title">📊 التقرير التراكمي (الشهر)</span>
-            <button class="btn-reset" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
+            <button class="btn-reset" onclick="clearAllData()">🗑️ مسح الكل</button>
         </div>
-        
         <div class="table-responsive">
             <table id="statsTable">
                 <thead>
@@ -278,6 +163,72 @@
             </table>
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">📅 أرشيف العمليات اليومية</span>
+            <div class="controls">
+                <input type="date" id="filterDate" title="فلتر بالتاريخ">
+                <select id="filterName">
+                    <option value="">كل الأسماء</option>
+                    </select>
+                <button class="btn-filter" onclick="renderHistoryTable()">🔍 بحث</button>
+                <button class="btn-filter" onclick="resetFilter()" style="background:#7f8c8d">إلغاء</button>
+                <button class="btn-export" onclick="exportToExcel()">📥 تصدير Excel</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>الاسم</th>
+                        <th>ساعات</th>
+                        <th>مطلوب</th>
+                        <th>محقق</th>
+                        <th>النسبة</th>
+                        <th>الحالة</th>
+                        <th>ملاحظات</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">تعديل سجل</div>
+        <input type="hidden" id="editId">
+        
+        <div class="form-group">
+            <label>اسم الموظف:</label>
+            <input type="text" id="editName" disabled style="background:#eee">
+        </div>
+        <div class="form-group">
+            <label>التاريخ:</label>
+            <input type="date" id="editDate" disabled style="background:#eee">
+        </div>
+        <div class="form-group">
+            <label>ساعات العمل:</label>
+            <input type="number" id="editHours">
+        </div>
+        <div class="form-group">
+            <label>عدد المكالمات:</label>
+            <input type="number" id="editCalls">
+        </div>
+        <div class="form-group">
+            <label>ملاحظات:</label>
+            <input type="text" id="editNote">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-save" onclick="saveEdit()" style="margin:0">حفظ التعديلات</button>
+            <button class="btn-reset" onclick="closeModal()" style="background:#7f8c8d; margin:0">إلغاء</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -286,12 +237,22 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currentDate').valueAsDate = new Date();
+        
+        // تعبئة قائمة فلتر الأسماء
+        const nameSelect = document.getElementById('filterName');
+        TEAM_NAMES.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            nameSelect.appendChild(option);
+        });
+
         renderEntryTable();
-        renderHistoryTable(); // عرض السجل
-        calculateAndRenderStats(); // عرض الملخص
+        renderHistoryTable();
+        calculateAndRenderStats();
     });
 
-    // 1. رسم جدول الإدخال
+    // --- 1. الإدخال ---
     function renderEntryTable() {
         const tbody = document.getElementById('entryTableBody');
         tbody.innerHTML = '';
@@ -308,7 +269,6 @@
         });
     }
 
-    // 2. معاينة فورية
     function previewStatus(index) {
         const hours = parseFloat(document.getElementById(`hours_${index}`).value) || 0;
         const calls = parseInt(document.getElementById(`calls_${index}`).value) || 0;
@@ -325,7 +285,6 @@
         }
     }
 
-    // 3. حفظ البيانات
     function saveDailyData() {
         const date = document.getElementById('currentDate').value;
         let dailyRecords = [];
@@ -342,7 +301,7 @@
                 const percent = (calls / required) * 100;
                 
                 dailyRecords.push({
-                    id: Date.now() + index, // معرف فريد للحذف
+                    id: Date.now() + index, 
                     date: date,
                     name: name,
                     hours: hours,
@@ -357,35 +316,43 @@
         if (!hasData) { alert('أدخل بيانات لموظف واحد على الأقل'); return; }
 
         let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
-        // حذف البيانات القديمة لنفس التاريخ لمنع التكرار عند التعديل
-        allHistory = allHistory.filter(record => record.date !== date);
+        // منع التكرار لنفس الشخص في نفس اليوم (اختياري - هنا بنضيف على القديم)
+        // لكن عشان نكون دقيقين، هنشيل سجلات اليوم ده لنفس الاسماء لو موجودة ونحط الجديد
+        // (تم تبسيطها للإضافة المباشرة)
         
         allHistory = [...allHistory, ...dailyRecords];
         localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
         
         alert('تم حفظ البيانات بنجاح ✅');
+        
+        // تصفير الحقول
         renderEntryTable();
+        // تحديث الجداول
         renderHistoryTable();
         calculateAndRenderStats();
     }
 
-    // 4. عرض سجل التاريخ (الجزء الجديد)
+    // --- 2. الأرشيف والفلتر والتعديل ---
     function renderHistoryTable() {
         let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
         const filterDate = document.getElementById('filterDate').value;
+        const filterName = document.getElementById('filterName').value;
         const tbody = document.getElementById('historyBody');
         tbody.innerHTML = '';
 
-        // ترتيب حسب التاريخ (الأحدث أولاً)
+        // ترتيب حسب التاريخ
         allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        // تطبيق الفلتر لو موجود
+        // الفلتر
         if (filterDate) {
             allHistory = allHistory.filter(r => r.date === filterDate);
         }
+        if (filterName) {
+            allHistory = allHistory.filter(r => r.name === filterName);
+        }
 
         if (allHistory.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center">لا توجد سجلات لهذا التاريخ</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">لا توجد سجلات مطابقة</td></tr>';
             return;
         }
 
@@ -405,7 +372,10 @@
                     <td>${r.percent.toFixed(1)}%</td>
                     <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                     <td style="font-size:0.9em; color:#666;">${r.note}</td>
-                    <td><span class="delete-icon" onclick="deleteRecord(${r.id})">X</span></td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="openEditModal(${r.id})">✏️</button>
+                        <button class="action-btn del-btn" onclick="deleteRecord(${r.id})">X</button>
+                    </td>
                 </tr>
             `;
         });
@@ -413,11 +383,62 @@
 
     function resetFilter() {
         document.getElementById('filterDate').value = '';
+        document.getElementById('filterName').value = '';
         renderHistoryTable();
     }
 
+    // --- 3. وظائف التعديل (Modal) ---
+    function openEditModal(id) {
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        const record = allHistory.find(r => r.id === id);
+        if(!record) return;
+
+        document.getElementById('editId').value = record.id;
+        document.getElementById('editName').value = record.name;
+        document.getElementById('editDate').value = record.date;
+        document.getElementById('editHours').value = record.hours;
+        document.getElementById('editCalls').value = record.calls;
+        document.getElementById('editNote').value = record.note;
+
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    function saveEdit() {
+        const id = parseFloat(document.getElementById('editId').value);
+        const hours = parseFloat(document.getElementById('editHours').value);
+        const calls = parseInt(document.getElementById('editCalls').value);
+        const note = document.getElementById('editNote').value;
+
+        if(!hours || hours <= 0) { alert('عدد الساعات غير صحيح'); return; }
+
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        const index = allHistory.findIndex(r => r.id === id);
+        
+        if(index !== -1) {
+            // إعادة الحساب
+            const required = hours * TARGET_PER_HOUR;
+            const percent = (calls / required) * 100;
+
+            allHistory[index].hours = hours;
+            allHistory[index].calls = calls;
+            allHistory[index].note = note;
+            allHistory[index].required = required;
+            allHistory[index].percent = percent;
+
+            localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
+            closeModal();
+            renderHistoryTable();
+            calculateAndRenderStats();
+            alert('تم تعديل السجل بنجاح');
+        }
+    }
+
     function deleteRecord(id) {
-        if(confirm('حذف هذا السجل؟')) {
+        if(confirm('حذف هذا السجل نهائياً؟')) {
             let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
             allHistory = allHistory.filter(r => r.id !== id);
             localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
@@ -426,7 +447,7 @@
         }
     }
 
-    // 5. التقرير التراكمي
+    // --- 4. التقرير والتصدير ---
     function calculateAndRenderStats() {
         let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
         const tbody = document.getElementById('statsBody');
@@ -435,7 +456,7 @@
         TEAM_NAMES.forEach(name => {
             const records = allHistory.filter(r => r.name === name);
             if (records.length === 0) {
-                tbody.innerHTML += `<tr><td>${name}</td><td colspan="5" style="text-align:center; color:#999;">لا توجد بيانات</td></tr>`;
+                tbody.innerHTML += `<tr><td>${name}</td><td colspan="5" style="text-align:center; color:#999;">-</td></tr>`;
                 return;
             }
 
@@ -462,10 +483,34 @@
     }
 
     function clearAllData() {
-        if(confirm('تحذير: هل أنت متأكد من مسح جميع البيانات؟')) {
+        if(confirm('تحذير: مسح جميع البيانات؟')) {
             localStorage.removeItem('teamProductivityDB');
             location.reload();
         }
+    }
+
+    function exportToExcel() {
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        if(allHistory.length === 0) { alert('لا توجد بيانات للتصدير'); return; }
+
+        // إنشاء محتوى ملف CSV
+        // \uFEFF هو BOM لجعل الاكسيل يقرأ العربي بشكل صحيح
+        let csvContent = "\uFEFF"; 
+        csvContent += "التاريخ,الاسم,ساعات العمل,التارجت المطلوب,المكالمات المحققة,النسبة المئوية,الملاحظات\n";
+
+        allHistory.forEach(r => {
+            let row = `${r.date},${r.name},${r.hours},${r.required},${r.calls},${r.percent.toFixed(1)}%,${r.note}`;
+            csvContent += row + "\n";
+        });
+
+        // إنشاء رابط التحميل
+        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Team_Productivity_Report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 </script>
 
