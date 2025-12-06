@@ -2,169 +2,339 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Productivity Tracker & Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابع إنتاجية الفريق - التارجت</title>
     <style>
-        body { font-family: Arial; background:#f5f5f5; padding:20px; margin:0; }
-        .container { background:white; padding:20px; border-radius:10px; max-width:950px; margin:auto; box-shadow:0 0 10px #ccc; margin-bottom:30px; }
-        input, textarea, select { width:100%; padding:8px; margin:5px 0 10px; border:1px solid #aaa; border-radius:6px; box-sizing:border-box; }
-        button { padding:10px 20px; border:none; background:#333; color:white; border-radius:6px; cursor:pointer; margin-top:10px; margin-right:5px; }
-        table { width:100%; margin-top:20px; border-collapse:collapse; }
-        th, td { padding:10px; border:1px solid #ddd; text-align:center; }
-        th { background:#333; color:white; }
-        .success { color:green; font-weight:bold; }
-        .fail { color:red; font-weight:bold; }
-        h2,h3 { margin-bottom:10px; }
-        canvas { margin-top:20px; max-width:100%; }
-        @media (max-width: 600px) {
-            .container { padding:10px; }
-            button { width:100%; margin-bottom:10px; }
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #c0392b;
+            --light-bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* Form Styling */
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .form-control {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: white;
+            font-weight: bold;
+        }
+        .bg-success { background-color: var(--success-color); }
+        .bg-danger { background-color: var(--danger-color); }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            width: 100%;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .note-text {
+            font-style: italic;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .delete-btn {
+            background-color: var(--danger-color);
+            padding: 5px 10px;
+            font-size: 0.8em;
+            width: auto;
+            margin: 0;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>تتبع الإنتاجية - Productivity Tracker</h2>
-    <h3>إضافة سجل يومي</h3>
+    <div style="text-align: center;">
+        <h1>📊 متابع تارجت الفريق</h1>
+    </div>
 
-    <label>اسم الموظف:</label>
-    <select id="name">
-        <option value="Mahmoud">Mahmoud</option>
-        <option value="Mohamed">Mohamed</option>
-        <option value="Adham">Adham</option>
-    </select>
+    <div class="input-group">
+        <div class="form-control">
+            <label>التاريخ</label>
+            <input type="date" id="dateInput">
+        </div>
+        <div class="form-control">
+            <label>اسم الموظف</label>
+            <input type="text" id="nameInput" placeholder="أدخل الاسم">
+        </div>
+        <div class="form-control">
+            <label>ساعات العمل (Call Time)</label>
+            <input type="number" id="hoursInput" placeholder="مثلاً: 4 أو 8" min="1" max="12">
+        </div>
+        <div class="form-control">
+            <label>عدد المكالمات المحققة</label>
+            <input type="number" id="callsInput" placeholder="العدد الفعلي">
+        </div>
+        <div class="form-control" style="grid-column: 1 / -1;">
+            <label>ملاحظات (إذن، تدريب، عمل إداري...)</label>
+            <input type="text" id="notesInput" placeholder="اكتب الملاحظة هنا...">
+        </div>
+    </div>
 
-    <label>ساعات العمل الفعلية:</label>
-    <input type="number" id="hours" min="0" max="8">
+    <button onclick="addRecord()">إضافة سجل +</button>
 
-    <label>عدد المكالمات:</label>
-    <input type="number" id="calls" min="0">
+    <hr>
 
-    <label>نوت / ملاحظة:</label>
-    <textarea id="note"></textarea>
+    <div class="summary-box">
+        <span>سجل الشهر الحالي</span>
+        <span id="totalRecords">عدد السجلات: 0</span>
+    </div>
 
-    <label>التاريخ:</label>
-    <input type="date" id="date">
-
-    <button onclick="addRecord()">إضافة</button>
-    <button onclick="exportExcel()">تصدير Excel</button>
-
-    <h3>سجلات الشهر</h3>
     <table id="recordsTable">
-        <tr>
-            <th>الاسم</th>
-            <th>الساعات</th>
-            <th>المكالمات</th>
-            <th>تحقيق التارجت</th>
-            <th>النوت</th>
-            <th>اليوم</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>الاسم</th>
+                <th>ساعات العمل</th>
+                <th>المطلوب (17/س)</th>
+                <th>المحقق</th>
+                <th>النسبة %</th>
+                <th>الحالة</th>
+                <th>ملاحظات</th>
+                <th>حذف</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
     </table>
 </div>
 
-<div class="container">
-    <h2>Dashboard الفريق</h2>
-    <canvas id="callsChart" height="150"></canvas>
-    <canvas id="targetChart" height="150"></canvas>
-</div>
-
 <script>
-    let records = [];
-    function addRecord() {
-        let name = document.getElementById("name").value;
-        let hours = Number(document.getElementById("hours").value);
-        let calls = Number(document.getElementById("calls").value);
-        let note = document.getElementById("note").value;
-        let date = document.getElementById("date").value;
+    // إعداد التاريخ لليوم تلقائياً
+    document.getElementById('dateInput').valueAsDate = new Date();
 
-        if (!hours || !calls || !date) {
-            alert("من فضلك املأ كل البيانات الأساسية");
+    // التارجت في الساعة
+    const TARGET_PER_HOUR = 17;
+
+    // تحميل البيانات المحفوظة عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', loadData);
+
+    function addRecord() {
+        const date = document.getElementById('dateInput').value;
+        const name = document.getElementById('nameInput').value;
+        const hours = parseFloat(document.getElementById('hoursInput').value);
+        const calls = parseInt(document.getElementById('callsInput').value);
+        const notes = document.getElementById('notesInput').value;
+
+        if (!date || !name || !hours || isNaN(calls)) {
+            alert('الرجاء ملء جميع الحقول الأساسية');
             return;
         }
 
-        let required = hours * 17;
-        let achieved = calls >= required;
+        // المعادلة الحسابية
+        const requiredCalls = hours * TARGET_PER_HOUR;
+        const achievementPercent = (calls / requiredCalls) * 100;
+        const isAchieved = calls >= requiredCalls;
+        const diff = calls - requiredCalls; // الفارق (بالسالب أو الموجب)
 
-        let record = { name, hours, calls, note: note||"-", date, achieved, required };
-        records.push(record);
+        const record = {
+            id: Date.now(),
+            date,
+            name,
+            hours,
+            requiredCalls,
+            calls,
+            achievementPercent: achievementPercent.toFixed(1),
+            isAchieved,
+            diff,
+            notes
+        };
 
-        renderTable();
-        saveToLocalStorage();
-        updateCharts();
+        saveRecord(record);
+        renderRow(record);
+        clearInputs();
     }
 
-    function renderTable() {
-        let table = document.getElementById("recordsTable");
-        table.innerHTML = `
-            <tr>
-                <th>الاسم</th>
-                <th>الساعات</th>
-                <th>المكالمات</th>
-                <th>تحقيق التارجت</th>
-                <th>النوت</th>
-                <th>اليوم</th>
-            </tr>
+    function renderRow(record) {
+        const table = document.getElementById('recordsTable').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+
+        // تحديد لون الحالة وشريط التقدم
+        const statusClass = record.isAchieved ? 'bg-success' : 'bg-danger';
+        const statusText = record.isAchieved ? 'تم التحقيق' : 'لم يتحقق';
+        const diffText = record.diff > 0 ? `+${record.diff}` : `${record.diff}`;
+        
+        // لون شريط التقدم يعتمد على النسبة
+        let progressColor = '#e74c3c'; // أحمر
+        if (record.achievementPercent >= 100) progressColor = '#27ae60'; // أخضر
+        else if (record.achievementPercent >= 80) progressColor = '#f39c12'; // برتقالي
+
+        // الحد الأقصى للعرض 100% للشريط
+        const widthPercent = Math.min(record.achievementPercent, 100);
+
+        newRow.innerHTML = `
+            <td>${record.date}</td>
+            <td><strong>${record.name}</strong></td>
+            <td>${record.hours} ساعات</td>
+            <td>${record.requiredCalls}</td>
+            <td>
+                ${record.calls} <small style="color:${record.diff >= 0 ? 'green' : 'red'}">(${diffText})</small>
+            </td>
+            <td>
+                ${record.achievementPercent}%
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: ${widthPercent}%; background-color: ${progressColor};"></div>
+                </div>
+            </td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
+            <td class="note-text">${record.notes}</td>
+            <td><button class="delete-btn" onclick="deleteRecord(${record.id}, this)">X</button></td>
         `;
-        for (let r of records) {
-            let row = table.insertRow(-1);
-            row.innerHTML = `
-                <td>${r.name}</td>
-                <td>${r.hours}</td>
-                <td>${r.calls}</td>
-                <td class="${r.achieved ? 'success' : 'fail'}">
-                    ${r.achieved ? "✔ محقق" : "✘ غير محقق"} (المطلوب: ${r.required})
-                </td>
-                <td>${r.note}</td>
-                <td>${r.date}</td>
-            `;
+
+        updateCount();
+    }
+
+    function saveRecord(record) {
+        let records = JSON.parse(localStorage.getItem('teamProductivity')) || [];
+        records.push(record);
+        localStorage.setItem('teamProductivity', JSON.stringify(records));
+    }
+
+    function loadData() {
+        let records = JSON.parse(localStorage.getItem('teamProductivity')) || [];
+        records.forEach(renderRow);
+        updateCount();
+    }
+
+    function deleteRecord(id, btn) {
+        if(confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+            let records = JSON.parse(localStorage.getItem('teamProductivity')) || [];
+            records = records.filter(r => r.id !== id);
+            localStorage.setItem('teamProductivity', JSON.stringify(records));
+            
+            // حذف الصف من الجدول
+            const row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            updateCount();
         }
     }
 
-    function saveToLocalStorage() { localStorage.setItem("prodData", JSON.stringify(records)); }
-    function loadFromLocalStorage() {
-        let saved = localStorage.getItem("prodData");
-        if (saved) { records = JSON.parse(saved); renderTable(); updateCharts(); }
+    function updateCount() {
+        const count = document.getElementById('recordsTable').getElementsByTagName('tbody')[0].rows.length;
+        document.getElementById('totalRecords').innerText = `عدد السجلات: ${count}`;
     }
 
-    function exportExcel() {
-        let table = document.getElementById("recordsTable");
-        let workbook = XLSX.utils.book_new();
-        let sheet = XLSX.utils.table_to_sheet(table);
-        XLSX.utils.book_append_sheet(workbook, sheet, "Productivity");
-        XLSX.writeFile(workbook, "productivity_report.xlsx");
+    function clearInputs() {
+        document.getElementById('nameInput').value = '';
+        document.getElementById('hoursInput').value = '';
+        document.getElementById('callsInput').value = '';
+        document.getElementById('notesInput').value = '';
     }
-
-    // Dashboard
-    let callsChart, targetChart;
-    function updateCharts() {
-        let names = ["Mahmoud","Mohamed","Adham"];
-        let totalCalls = names.map(n => records.filter(r => r.name===n).reduce((a,b)=>a+b.calls,0));
-        let targetAchieved = names.map(n => {
-            let empRecords = records.filter(r => r.name===n);
-            let totalRequired = empRecords.reduce((a,b)=>a+b.required,0);
-            let totalDone = empRecords.reduce((a,b)=>a+b.calls,0);
-            return totalRequired===0 ? 0 : Math.round((totalDone/totalRequired)*100);
-        });
-
-        if (callsChart) callsChart.destroy();
-        let ctx1 = document.getElementById("callsChart").getContext("2d");
-        callsChart = new Chart(ctx1, {
-            type: 'bar', data: { labels: names, datasets: [{ label: 'إجمالي المكالمات', data: totalCalls, backgroundColor: ['#3e95cd','#8e5ea2','#3cba9f'] }] },
-            options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
-        });
-
-        if (targetChart) targetChart.destroy();
-        let ctx2 = document.getElementById("targetChart").getContext("2d");
-        targetChart = new Chart(ctx2, {
-            type: 'bar', data: { labels: names, datasets: [{ label: 'نسبة تحقيق التارجت %', data: targetAchieved, backgroundColor: ['#ff6384','#36a2eb','#ffce56'] }] },
-            options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, max:100}} }
-        });
-    }
-
-    loadFromLocalStorage();
 </script>
 
 </body>
