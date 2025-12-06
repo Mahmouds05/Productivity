@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Productivity Pro</title>
+    <title>Team Productivity Pro - V3</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -13,6 +13,8 @@
             --green: #27ae60;
             --red: #c0392b;
             --orange: #f39c12;
+            --purple: #8e44ad;
+            --grey: #95a5a6;
             --border: #dfe6e9;
         }
 
@@ -24,7 +26,7 @@
             color: #333;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; }
+        .container { max-width: 1250px; margin: 0 auto; }
 
         header { text-align: center; margin-bottom: 30px; }
         h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
@@ -51,7 +53,7 @@
 
         .card-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
 
-        /* أدوات التحكم والفلتر */
+        /* أدوات التحكم */
         .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         
         input, select {
@@ -63,35 +65,40 @@
 
         /* الجداول */
         .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border); vertical-align: middle; }
         th { background-color: #f8f9fa; color: var(--primary); font-weight: 600; }
         tr:hover { background-color: #fafafa; }
 
-        .input-mini { width: 70px; text-align: center; }
-        .input-note { width: 90%; }
+        .input-mini { width: 60px; text-align: center; }
+        .input-note { width: 100%; min-width: 150px; }
+        select.status-select { width: 110px; font-size: 0.9em; }
 
         /* الأزرار */
-        button { cursor: pointer; border: none; border-radius: 5px; padding: 8px 15px; font-family: inherit; transition: 0.3s; }
+        button { cursor: pointer; border: none; border-radius: 5px; padding: 8px 15px; font-family: inherit; transition: 0.3s; font-weight: 600; }
         .btn-save { background-color: var(--primary); color: white; width: 100%; padding: 12px; margin-top: 20px; font-size: 1rem; }
         .btn-save:hover { background-color: #1a252f; }
-        .btn-reset { background-color: var(--red); color: white; font-size: 0.9rem; }
+        .btn-reset { background-color: var(--red); color: white; font-size: 0.85rem; }
         .btn-filter { background-color: var(--accent); color: white; }
-        .btn-export { background-color: var(--green); color: white; }
+        .btn-excel-daily { background-color: var(--green); color: white; }
+        .btn-excel-monthly { background-color: var(--purple); color: white; }
         
         /* أيقونات الجدول */
-        .action-btn { padding: 4px 8px; font-size: 0.9rem; margin-left: 5px; }
-        .edit-btn { background-color: var(--orange); color: white; }
-        .del-btn { background-color: var(--red); color: white; }
+        .action-btn { padding: 4px 8px; font-size: 0.9rem; margin-left: 5px; color: white; border-radius: 4px; }
+        .edit-btn { background-color: var(--orange); }
+        .del-btn { background-color: var(--red); }
 
         /* البادجات */
-        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: white; display: inline-block; min-width: 60px; text-align: center; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white; display: inline-block; min-width: 60px; text-align: center; }
         .b-green { background: var(--green); }
         .b-red { background: var(--red); }
         .b-orange { background: var(--orange); }
+        .b-grey { background: var(--grey); } /* للإجازات */
+        .b-purple { background: var(--purple); } /* للإجازات السنوية */
+
         .row-highlight { background-color: #e8f8f5; }
 
-        /* النافذة المنبثقة (Modal) للتعديل */
+        /* النافذة المنبثقة (Modal) */
         .modal-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -101,19 +108,22 @@
         .modal-content {
             background: white; padding: 25px; border-radius: 10px; width: 400px; max-width: 90%;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s;
         }
-        .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; color: var(--primary); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        .form-group input { width: 100%; box-sizing: border-box; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .form-group input, .form-group select { width: 100%; box-sizing: border-box; padding: 10px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>🚀 متابعة إنتاجية الفريق</h1>
+        <h1>🚀 متابعة إنتاجية الفريق (V3)</h1>
         <p>التارجت: 17 مكالمة / ساعة</p>
     </header>
 
@@ -130,8 +140,9 @@
                 <thead>
                     <tr>
                         <th>الاسم</th>
-                        <th style="width: 100px;">ساعات</th>
-                        <th style="width: 100px;">مكالمات</th>
+                        <th>الحالة</th>
+                        <th style="width: 80px;">ساعات</th>
+                        <th style="width: 80px;">مكالمات</th>
                         <th>ملاحظات</th>
                         <th>معاينة</th>
                     </tr>
@@ -145,14 +156,18 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title">📊 التقرير التراكمي (الشهر)</span>
-            <button class="btn-reset" onclick="clearAllData()">🗑️ مسح الكل</button>
+            <div class="controls">
+                <button class="btn-excel-monthly" onclick="exportMonthlyToExcel()">📥 تصدير التقرير الشهري</button>
+                <button class="btn-reset" onclick="clearAllData()">🗑️ مسح الكل</button>
+            </div>
         </div>
         <div class="table-responsive">
             <table id="statsTable">
                 <thead>
                     <tr>
                         <th>الاسم</th>
-                        <th>أيام العمل</th>
+                        <th>أيام العمل الفعلي</th>
+                        <th>أيام الإجازات/الغياب</th>
                         <th>إجمالي الساعات</th>
                         <th>إجمالي المكالمات</th>
                         <th>متوسط الأداء %</th>
@@ -168,13 +183,13 @@
         <div class="card-header">
             <span class="card-title">📅 أرشيف العمليات اليومية</span>
             <div class="controls">
-                <input type="date" id="filterDate" title="فلتر بالتاريخ">
+                <input type="date" id="filterDate">
                 <select id="filterName">
                     <option value="">كل الأسماء</option>
-                    </select>
+                </select>
                 <button class="btn-filter" onclick="renderHistoryTable()">🔍 بحث</button>
                 <button class="btn-filter" onclick="resetFilter()" style="background:#7f8c8d">إلغاء</button>
-                <button class="btn-export" onclick="exportToExcel()">📥 تصدير Excel</button>
+                <button class="btn-excel-daily" onclick="exportDailyToExcel()">📥 تصدير السجل اليومي</button>
             </div>
         </div>
         <div class="table-responsive">
@@ -183,11 +198,11 @@
                     <tr>
                         <th>التاريخ</th>
                         <th>الاسم</th>
+                        <th>الحالة</th>
                         <th>ساعات</th>
                         <th>مطلوب</th>
                         <th>محقق</th>
-                        <th>النسبة</th>
-                        <th>الحالة</th>
+                        <th>نسبة</th>
                         <th>ملاحظات</th>
                         <th>إجراءات</th>
                     </tr>
@@ -212,6 +227,16 @@
             <input type="date" id="editDate" disabled style="background:#eee">
         </div>
         <div class="form-group">
+            <label>الحالة:</label>
+            <select id="editStatus" onchange="toggleEditInputs()">
+                <option value="working">💼 عمل (Working)</option>
+                <option value="vacation">🏖️ إجازة سنوي (Annual)</option>
+                <option value="sick">🚑 إجازة مرضي (Sick)</option>
+                <option value="absent">🚫 غياب (Absent)</option>
+                <option value="off">🏠 يوم إجازة (Day Off)</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label>ساعات العمل:</label>
             <input type="number" id="editHours">
         </div>
@@ -225,7 +250,7 @@
         </div>
 
         <div class="modal-actions">
-            <button class="btn-save" onclick="saveEdit()" style="margin:0">حفظ التعديلات</button>
+            <button class="btn-save" onclick="saveEdit()" style="margin:0">تحديث وحفظ</button>
             <button class="btn-reset" onclick="closeModal()" style="background:#7f8c8d; margin:0">إلغاء</button>
         </div>
     </div>
@@ -238,7 +263,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('currentDate').valueAsDate = new Date();
         
-        // تعبئة قائمة فلتر الأسماء
         const nameSelect = document.getElementById('filterName');
         TEAM_NAMES.forEach(name => {
             const option = document.createElement('option');
@@ -260,28 +284,60 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td style="font-weight:bold;">${name}</td>
+                <td>
+                    <select id="status_${index}" class="status-select" onchange="toggleInputState(${index})">
+                        <option value="working">💼 عمل</option>
+                        <option value="vacation">🏖️ سنوي</option>
+                        <option value="sick">🚑 مرضي</option>
+                        <option value="absent">🚫 غياب</option>
+                        <option value="off">🏠 Off</option>
+                    </select>
+                </td>
                 <td><input type="number" id="hours_${index}" class="input-mini" placeholder="0" oninput="previewStatus(${index})"></td>
                 <td><input type="number" id="calls_${index}" class="input-mini" placeholder="0" oninput="previewStatus(${index})"></td>
                 <td><input type="text" id="note_${index}" class="input-note" placeholder="..."></td>
-                <td id="status_${index}">-</td>
+                <td id="preview_${index}">-</td>
             `;
             tbody.appendChild(tr);
         });
     }
 
+    function toggleInputState(index) {
+        const status = document.getElementById(`status_${index}`).value;
+        const hoursInput = document.getElementById(`hours_${index}`);
+        const callsInput = document.getElementById(`calls_${index}`);
+        const previewCell = document.getElementById(`preview_${index}`);
+
+        if (status !== 'working') {
+            hoursInput.value = '';
+            callsInput.value = '';
+            hoursInput.disabled = true;
+            callsInput.disabled = true;
+            hoursInput.style.backgroundColor = '#eee';
+            callsInput.style.backgroundColor = '#eee';
+            previewCell.innerHTML = '<span style="color:#95a5a6">إجازة/غياب</span>';
+        } else {
+            hoursInput.disabled = false;
+            callsInput.disabled = false;
+            hoursInput.style.backgroundColor = 'white';
+            callsInput.style.backgroundColor = 'white';
+            previewCell.innerHTML = '-';
+        }
+    }
+
     function previewStatus(index) {
         const hours = parseFloat(document.getElementById(`hours_${index}`).value) || 0;
         const calls = parseInt(document.getElementById(`calls_${index}`).value) || 0;
-        const statusCell = document.getElementById(`status_${index}`);
+        const previewCell = document.getElementById(`preview_${index}`);
 
         if (hours > 0) {
             const required = hours * TARGET_PER_HOUR;
             const diff = calls - required;
             const isAchieved = calls >= required;
             let color = isAchieved ? 'green' : 'red';
-            statusCell.innerHTML = `<span style="color:${color}; font-weight:bold;">${isAchieved ? '✔️' : '❌'} (${diff > 0 ? '+' : ''}${diff})</span>`;
+            previewCell.innerHTML = `<span style="color:${color}; font-weight:bold;">${isAchieved ? '✔️' : '❌'} (${diff > 0 ? '+' : ''}${diff})</span>`;
         } else {
-            statusCell.innerHTML = '-';
+            previewCell.innerHTML = '-';
         }
     }
 
@@ -291,19 +347,28 @@
         let hasData = false;
 
         TEAM_NAMES.forEach((name, index) => {
-            const hours = parseFloat(document.getElementById(`hours_${index}`).value);
-            const calls = parseInt(document.getElementById(`calls_${index}`).value);
+            const status = document.getElementById(`status_${index}`).value;
+            const hours = parseFloat(document.getElementById(`hours_${index}`).value) || 0;
+            const calls = parseInt(document.getElementById(`calls_${index}`).value) || 0;
             const note = document.getElementById(`note_${index}`).value;
 
-            if (hours && hours > 0) {
+            // نحفظ لو هو شغال وعنده ساعات، أو لو هو واخد إجازة/غياب
+            if (status !== 'working' || (status === 'working' && hours > 0)) {
                 hasData = true;
-                const required = hours * TARGET_PER_HOUR;
-                const percent = (calls / required) * 100;
                 
+                let required = 0;
+                let percent = 0;
+
+                if (status === 'working') {
+                    required = hours * TARGET_PER_HOUR;
+                    percent = (calls / required) * 100;
+                }
+
                 dailyRecords.push({
                     id: Date.now() + index, 
                     date: date,
                     name: name,
+                    status: status, // working, vacation, etc.
                     hours: hours,
                     calls: calls,
                     required: required,
@@ -313,64 +378,76 @@
             }
         });
 
-        if (!hasData) { alert('أدخل بيانات لموظف واحد على الأقل'); return; }
+        if (!hasData) { alert('لم يتم إدخال أي بيانات! يرجى إدخال ساعات عمل أو تسجيل إجازات.'); return; }
 
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
-        // منع التكرار لنفس الشخص في نفس اليوم (اختياري - هنا بنضيف على القديم)
-        // لكن عشان نكون دقيقين، هنشيل سجلات اليوم ده لنفس الاسماء لو موجودة ونحط الجديد
-        // (تم تبسيطها للإضافة المباشرة)
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        // إزالة السجلات السابقة لنفس اليوم لنفس الأشخاص (تحديث)
+        allHistory = allHistory.filter(r => r.date !== date); 
         
         allHistory = [...allHistory, ...dailyRecords];
-        localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
+        localStorage.setItem('teamProductivityDB_V3', JSON.stringify(allHistory));
         
-        alert('تم حفظ البيانات بنجاح ✅');
-        
-        // تصفير الحقول
+        alert('✅ تم الحفظ بنجاح!');
         renderEntryTable();
-        // تحديث الجداول
         renderHistoryTable();
         calculateAndRenderStats();
     }
 
-    // --- 2. الأرشيف والفلتر والتعديل ---
+    // --- 2. الأرشيف والفلتر ---
     function renderHistoryTable() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
         const filterDate = document.getElementById('filterDate').value;
         const filterName = document.getElementById('filterName').value;
         const tbody = document.getElementById('historyBody');
         tbody.innerHTML = '';
 
-        // ترتيب حسب التاريخ
         allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        // الفلتر
-        if (filterDate) {
-            allHistory = allHistory.filter(r => r.date === filterDate);
-        }
-        if (filterName) {
-            allHistory = allHistory.filter(r => r.name === filterName);
-        }
+        if (filterDate) allHistory = allHistory.filter(r => r.date === filterDate);
+        if (filterName) allHistory = allHistory.filter(r => r.name === filterName);
 
         if (allHistory.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">لا توجد سجلات مطابقة</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">لا توجد سجلات</td></tr>';
             return;
         }
 
         allHistory.forEach(r => {
-            const isAchieved = r.calls >= r.required;
-            const diff = r.calls - r.required;
-            const badgeClass = isAchieved ? 'b-green' : 'b-red';
-            const badgeText = isAchieved ? 'تم' : 'لم يتم';
+            let statusBadge = '';
+            let details = '';
             
-            tbody.innerHTML += `
-                <tr>
-                    <td>${r.date}</td>
-                    <td><strong>${r.name}</strong></td>
+            // تحديد شكل الصف بناء على الحالة
+            if (r.status === 'working') {
+                const isAchieved = r.calls >= r.required;
+                const diff = r.calls - r.required;
+                const badgeClass = isAchieved ? 'b-green' : 'b-red';
+                const badgeText = isAchieved ? 'تم' : 'لم يتم';
+                statusBadge = `<span class="badge ${badgeClass}">${badgeText}</span>`;
+                
+                details = `
                     <td>${r.hours}</td>
                     <td>${r.required}</td>
                     <td>${r.calls} <small style="color:${isAchieved?'green':'red'}">(${diff > 0 ? '+' : ''}${diff})</small></td>
                     <td>${r.percent.toFixed(1)}%</td>
-                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                `;
+            } else {
+                // حالات الإجازة والغياب
+                let label = '';
+                let colorClass = 'b-grey';
+                if(r.status === 'vacation') { label = 'إجازة سنوي'; colorClass = 'b-purple'; }
+                else if(r.status === 'sick') { label = 'إجازة مرضي'; colorClass = 'b-red'; }
+                else if(r.status === 'absent') { label = 'غياب'; colorClass = 'b-red'; }
+                else if(r.status === 'off') { label = 'Day Off'; colorClass = 'b-grey'; }
+                
+                statusBadge = `<span class="badge ${colorClass}">${label}</span>`;
+                details = `<td colspan="4" style="text-align:center; color:#7f8c8d;">-- ${label} --</td>`;
+            }
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${r.date}</td>
+                    <td><strong>${r.name}</strong></td>
+                    <td>${statusBadge}</td>
+                    ${details}
                     <td style="font-size:0.9em; color:#666;">${r.note}</td>
                     <td>
                         <button class="action-btn edit-btn" onclick="openEditModal(${r.id})">✏️</button>
@@ -387,20 +464,45 @@
         renderHistoryTable();
     }
 
-    // --- 3. وظائف التعديل (Modal) ---
+    // --- 3. التعديل (FIXED) ---
     function openEditModal(id) {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
-        const record = allHistory.find(r => r.id === id);
-        if(!record) return;
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        // تحويل id إلى رقم للتأكد من التطابق
+        const record = allHistory.find(r => r.id === Number(id));
+        
+        if(!record) { alert("خطأ: لم يتم العثور على السجل"); return; }
 
         document.getElementById('editId').value = record.id;
         document.getElementById('editName').value = record.name;
         document.getElementById('editDate').value = record.date;
+        document.getElementById('editStatus').value = record.status || 'working';
+        
         document.getElementById('editHours').value = record.hours;
         document.getElementById('editCalls').value = record.calls;
         document.getElementById('editNote').value = record.note;
 
+        toggleEditInputs(); // تفعيل/تعطيل الحقول حسب الحالة
         document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function toggleEditInputs() {
+        const status = document.getElementById('editStatus').value;
+        const hours = document.getElementById('editHours');
+        const calls = document.getElementById('editCalls');
+
+        if(status !== 'working') {
+            hours.disabled = true;
+            calls.disabled = true;
+            hours.style.background = '#eee';
+            calls.style.background = '#eee';
+            hours.value = 0;
+            calls.value = 0;
+        } else {
+            hours.disabled = false;
+            calls.disabled = false;
+            hours.style.background = 'white';
+            calls.style.background = 'white';
+        }
     }
 
     function closeModal() {
@@ -408,40 +510,49 @@
     }
 
     function saveEdit() {
-        const id = parseFloat(document.getElementById('editId').value);
-        const hours = parseFloat(document.getElementById('editHours').value);
-        const calls = parseInt(document.getElementById('editCalls').value);
+        // تحويل ID لرقم (FIX IMPORTANT)
+        const id = Number(document.getElementById('editId').value);
+        const status = document.getElementById('editStatus').value;
+        const hours = parseFloat(document.getElementById('editHours').value) || 0;
+        const calls = parseInt(document.getElementById('editCalls').value) || 0;
         const note = document.getElementById('editNote').value;
 
-        if(!hours || hours <= 0) { alert('عدد الساعات غير صحيح'); return; }
-
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
         const index = allHistory.findIndex(r => r.id === id);
         
         if(index !== -1) {
-            // إعادة الحساب
-            const required = hours * TARGET_PER_HOUR;
-            const percent = (calls / required) * 100;
+            let required = 0;
+            let percent = 0;
 
+            if (status === 'working') {
+                if (hours <= 0) { alert('يجب إدخال عدد ساعات للعمل'); return; }
+                required = hours * TARGET_PER_HOUR;
+                percent = (calls / required) * 100;
+            }
+
+            allHistory[index].status = status;
             allHistory[index].hours = hours;
             allHistory[index].calls = calls;
-            allHistory[index].note = note;
             allHistory[index].required = required;
             allHistory[index].percent = percent;
+            allHistory[index].note = note;
 
-            localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
+            localStorage.setItem('teamProductivityDB_V3', JSON.stringify(allHistory));
+            
             closeModal();
             renderHistoryTable();
             calculateAndRenderStats();
-            alert('تم تعديل السجل بنجاح');
+            alert('تم تعديل السجل وحفظه بنجاح ✅');
+        } else {
+            alert('حدث خطأ أثناء الحفظ (السجل غير موجود)');
         }
     }
 
     function deleteRecord(id) {
-        if(confirm('حذف هذا السجل نهائياً؟')) {
-            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
-            allHistory = allHistory.filter(r => r.id !== id);
-            localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
+        if(confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) {
+            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+            allHistory = allHistory.filter(r => r.id !== Number(id));
+            localStorage.setItem('teamProductivityDB_V3', JSON.stringify(allHistory));
             renderHistoryTable();
             calculateAndRenderStats();
         }
@@ -449,30 +560,40 @@
 
     // --- 4. التقرير والتصدير ---
     function calculateAndRenderStats() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
         const tbody = document.getElementById('statsBody');
         tbody.innerHTML = '';
 
         TEAM_NAMES.forEach(name => {
             const records = allHistory.filter(r => r.name === name);
             if (records.length === 0) {
-                tbody.innerHTML += `<tr><td>${name}</td><td colspan="5" style="text-align:center; color:#999;">-</td></tr>`;
+                tbody.innerHTML += `<tr><td>${name}</td><td colspan="6" style="text-align:center; color:#999;">-</td></tr>`;
                 return;
             }
 
-            const daysWorked = records.length;
-            const totalHours = records.reduce((sum, r) => sum + r.hours, 0);
-            const totalCalls = records.reduce((sum, r) => sum + r.calls, 0);
-            const totalPercent = records.reduce((sum, r) => sum + r.percent, 0);
-            const avgPercent = (totalPercent / daysWorked).toFixed(1);
+            // حساب أيام العمل الفعلية فقط للإحصائيات
+            const workRecords = records.filter(r => r.status === 'working');
+            const leaveRecords = records.filter(r => r.status !== 'working');
+
+            const daysWorked = workRecords.length;
+            const daysLeave = leaveRecords.length;
+            const totalHours = workRecords.reduce((sum, r) => sum + r.hours, 0);
+            const totalCalls = workRecords.reduce((sum, r) => sum + r.calls, 0);
+            const totalPercent = workRecords.reduce((sum, r) => sum + r.percent, 0);
+            
+            // المتوسط يحسب فقط على أيام العمل
+            const avgPercent = daysWorked > 0 ? (totalPercent / daysWorked).toFixed(1) : 0;
 
             let badgeClass = avgPercent >= 100 ? 'b-green' : (avgPercent >= 85 ? 'b-orange' : 'b-red');
             let badgeText = avgPercent >= 100 ? 'ممتاز' : (avgPercent >= 85 ? 'جيد جداً' : 'ضعيف');
+            
+            if(daysWorked === 0) { badgeClass = 'b-grey'; badgeText = 'لا يوجد عمل'; }
 
             tbody.innerHTML += `
                 <tr class="row-highlight">
                     <td style="font-weight:bold;">${name}</td>
                     <td>${daysWorked}</td>
+                    <td>${daysLeave}</td>
                     <td>${totalHours}</td>
                     <td>${totalCalls}</td>
                     <td style="direction:ltr">${avgPercent}%</td>
@@ -482,35 +603,63 @@
         });
     }
 
-    function clearAllData() {
-        if(confirm('تحذير: مسح جميع البيانات؟')) {
-            localStorage.removeItem('teamProductivityDB');
-            location.reload();
-        }
-    }
+    function exportDailyToExcel() {
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
 
-    function exportToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
-        if(allHistory.length === 0) { alert('لا توجد بيانات للتصدير'); return; }
-
-        // إنشاء محتوى ملف CSV
-        // \uFEFF هو BOM لجعل الاكسيل يقرأ العربي بشكل صحيح
         let csvContent = "\uFEFF"; 
-        csvContent += "التاريخ,الاسم,ساعات العمل,التارجت المطلوب,المكالمات المحققة,النسبة المئوية,الملاحظات\n";
+        csvContent += "التاريخ,الاسم,الحالة,ساعات العمل,التارجت,المحقق,النسبة %,ملاحظات\n";
 
         allHistory.forEach(r => {
-            let row = `${r.date},${r.name},${r.hours},${r.required},${r.calls},${r.percent.toFixed(1)}%,${r.note}`;
+            let statusText = r.status === 'working' ? 'عمل' : (r.status === 'vacation' ? 'إجازة سنوي' : 'غياب/أخرى');
+            let row = `${r.date},${r.name},${statusText},${r.hours},${r.required},${r.calls},${r.percent ? r.percent.toFixed(1) : 0}%,${r.note}`;
             csvContent += row + "\n";
         });
 
-        // إنشاء رابط التحميل
-        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+        downloadCSV(csvContent, "Daily_Productivity_Log.csv");
+    }
+
+    function exportMonthlyToExcel() {
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
+
+        let csvContent = "\uFEFF"; 
+        csvContent += "الاسم,أيام العمل,أيام الإجازات,إجمالي الساعات,إجمالي المكالمات,متوسط الأداء\n";
+
+        TEAM_NAMES.forEach(name => {
+            const records = allHistory.filter(r => r.name === name);
+            if(records.length > 0) {
+                const workRecords = records.filter(r => r.status === 'working');
+                const daysWorked = workRecords.length;
+                const daysLeave = records.filter(r => r.status !== 'working').length;
+                const totalHours = workRecords.reduce((s, r) => s + r.hours, 0);
+                const totalCalls = workRecords.reduce((s, r) => s + r.calls, 0);
+                const totalPercent = workRecords.reduce((s, r) => s + r.percent, 0);
+                const avg = daysWorked > 0 ? (totalPercent / daysWorked).toFixed(1) : 0;
+
+                let row = `${name},${daysWorked},${daysLeave},${totalHours},${totalCalls},${avg}%`;
+                csvContent += row + "\n";
+            }
+        });
+
+        downloadCSV(csvContent, "Monthly_Summary_Report.csv");
+    }
+
+    function downloadCSV(content, fileName) {
+        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + content);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Team_Productivity_Report.csv");
+        link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    function clearAllData() {
+        if(confirm('تحذير: مسح جميع البيانات؟')) {
+            localStorage.removeItem('teamProductivityDB_V3');
+            location.reload();
+        }
     }
 </script>
 
