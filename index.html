@@ -3,337 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متابع إنتاجية الفريق - التارجت</title>
+    <title>تارجت التيم - لوحة التحكم</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --success-color: #27ae60;
-            --danger-color: #c0392b;
-            --light-bg: #f4f7f6;
+            --bg-color: #f0f2f5;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --white: #ffffff;
+            --green: #27ae60;
+            --red: #c0392b;
+            --border: #dfe6e9;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
+            background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
             color: #333;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         h1 {
-            text-align: center;
-            color: var(--primary-color);
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        p {
+            color: #7f8c8d;
+        }
+
+        /* كروت الأقسام */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
             margin-bottom: 30px;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
-        /* Form Styling */
-        .input-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-            background: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .form-control {
+        .card-header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
         }
 
-        label {
-            margin-bottom: 5px;
+        .card-title {
+            font-size: 1.2rem;
             font-weight: bold;
-            font-size: 0.9em;
+            color: var(--primary);
         }
 
-        input, select, textarea {
-            padding: 10px;
-            border: 1px solid #bdc3c7;
+        /* التحكم في التاريخ */
+        .date-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 1em;
+            font-family: inherit;
         }
 
-        button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background 0.3s;
-            margin-top: 10px;
-            width: 100%;
+        /* الجداول */
+        .table-responsive {
+            overflow-x: auto;
         }
 
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            min-width: 600px;
         }
 
         th, td {
             padding: 12px 15px;
             text-align: right;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid var(--border);
         }
 
         th {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: #f8f9fa;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* حقول الإدخال داخل الجدول */
+        .input-mini {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .input-note {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
         }
 
         tr:hover {
-            background-color: #f1f1f1;
+            background-color: #fafafa;
         }
 
-        /* Status Badges */
+        /* الأزرار */
+        .btn-save {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .btn-save:hover {
+            background-color: #1a252f;
+        }
+
+        .btn-reset {
+            background-color: var(--red);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* بادجات الأداء */
         .badge {
             padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.85em;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
             color: white;
-            font-weight: bold;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
         }
-        .bg-success { background-color: var(--success-color); }
-        .bg-danger { background-color: var(--danger-color); }
+        .b-green { background: var(--green); }
+        .b-red { background: var(--red); }
+        .b-orange { background: #f39c12; }
 
-        /* Progress Bar */
-        .progress-container {
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            height: 10px;
-            width: 100%;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease-in-out;
-        }
-
-        .note-text {
-            font-style: italic;
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-        
-        .summary-box {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .delete-btn {
-            background-color: var(--danger-color);
-            padding: 5px 10px;
-            font-size: 0.8em;
-            width: auto;
-            margin: 0;
+        /* تظليل الصفوف */
+        .row-highlight {
+            background-color: #e8f8f5;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="text-align: center;">
-        <h1>📊 متابع تارجت الفريق</h1>
+    <header>
+        <h1>🚀 متابعة إنتاجية الفريق</h1>
+        <p>التارجت: 17 مكالمة / ساعة</p>
+    </header>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">📝 إدخال بيانات اليوم</span>
+            <div class="date-control">
+                <label>التاريخ:</label>
+                <input type="date" id="currentDate">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table id="entryTable">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th style="width: 100px;">ساعات العمل</th>
+                        <th style="width: 100px;">عدد المكالمات</th>
+                        <th>ملاحظات (إذن، تدريب...)</th>
+                        <th>الحالة (معاينة)</th>
+                    </tr>
+                </thead>
+                <tbody id="entryTableBody">
+                    </tbody>
+            </table>
+        </div>
+        
+        <button class="btn-save" onclick="saveDailyData()">💾 حفظ بيانات اليوم</button>
     </div>
 
-    <div class="input-group">
-        <div class="form-control">
-            <label>التاريخ</label>
-            <input type="date" id="dateInput">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">📊 التقرير التراكمي (الشهر)</span>
+            <button class="btn-reset" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
         </div>
-        <div class="form-control">
-            <label>اسم الموظف</label>
-            <input type="text" id="nameInput" placeholder="أدخل الاسم">
-        </div>
-        <div class="form-control">
-            <label>ساعات العمل (Call Time)</label>
-            <input type="number" id="hoursInput" placeholder="مثلاً: 4 أو 8" min="1" max="12">
-        </div>
-        <div class="form-control">
-            <label>عدد المكالمات المحققة</label>
-            <input type="number" id="callsInput" placeholder="العدد الفعلي">
-        </div>
-        <div class="form-control" style="grid-column: 1 / -1;">
-            <label>ملاحظات (إذن، تدريب، عمل إداري...)</label>
-            <input type="text" id="notesInput" placeholder="اكتب الملاحظة هنا...">
+        
+        <div class="table-responsive">
+            <table id="statsTable">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>أيام العمل</th>
+                        <th>إجمالي الساعات</th>
+                        <th>إجمالي المكالمات</th>
+                        <th>متوسط الأداء %</th>
+                        <th>التقييم العام</th>
+                    </tr>
+                </thead>
+                <tbody id="statsBody">
+                    </tbody>
+            </table>
         </div>
     </div>
-
-    <button onclick="addRecord()">إضافة سجل +</button>
-
-    <hr>
-
-    <div class="summary-box">
-        <span>سجل الشهر الحالي</span>
-        <span id="totalRecords">عدد السجلات: 0</span>
-    </div>
-
-    <table id="recordsTable">
-        <thead>
-            <tr>
-                <th>التاريخ</th>
-                <th>الاسم</th>
-                <th>ساعات العمل</th>
-                <th>المطلوب (17/س)</th>
-                <th>المحقق</th>
-                <th>النسبة %</th>
-                <th>الحالة</th>
-                <th>ملاحظات</th>
-                <th>حذف</th>
-            </tr>
-        </thead>
-        <tbody>
-            </tbody>
-    </table>
 </div>
 
 <script>
-    // إعداد التاريخ لليوم تلقائياً
-    document.getElementById('dateInput').valueAsDate = new Date();
+    // قائمة الأسماء الثابتة
+    const TEAM_NAMES = [
+        "Nada",
+        "Mayada",
+        "Mohamed",
+        "Mohamed Ashraf",
+        "Hany",
+        "Hesham",
+        "Awad",
+        "Nehal",
+        "Abdelghany"
+    ];
 
-    // التارجت في الساعة
     const TARGET_PER_HOUR = 17;
 
-    // تحميل البيانات المحفوظة عند فتح الصفحة
-    document.addEventListener('DOMContentLoaded', loadData);
+    // تهيئة الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('currentDate').valueAsDate = new Date();
+        renderEntryTable();
+        calculateAndRenderStats();
+    });
 
-    function addRecord() {
-        const date = document.getElementById('dateInput').value;
-        const name = document.getElementById('nameInput').value;
-        const hours = parseFloat(document.getElementById('hoursInput').value);
-        const calls = parseInt(document.getElementById('callsInput').value);
-        const notes = document.getElementById('notesInput').value;
+    // 1. رسم جدول الإدخال بناءً على الأسماء
+    function renderEntryTable() {
+        const tbody = document.getElementById('entryTableBody');
+        tbody.innerHTML = '';
 
-        if (!date || !name || !hours || isNaN(calls)) {
-            alert('الرجاء ملء جميع الحقول الأساسية');
+        TEAM_NAMES.forEach((name, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight:bold;">${name}</td>
+                <td><input type="number" id="hours_${index}" class="input-mini" placeholder="0" oninput="previewStatus(${index})"></td>
+                <td><input type="number" id="calls_${index}" class="input-mini" placeholder="0" oninput="previewStatus(${index})"></td>
+                <td><input type="text" id="note_${index}" class="input-note" placeholder="..."></td>
+                <td id="status_${index}">-</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 2. وظيفة معاينة الحالة (تحسب التارجت وأنت بتكتب)
+    function previewStatus(index) {
+        const hours = parseFloat(document.getElementById(`hours_${index}`).value) || 0;
+        const calls = parseInt(document.getElementById(`calls_${index}`).value) || 0;
+        const statusCell = document.getElementById(`status_${index}`);
+
+        if (hours > 0) {
+            const required = hours * TARGET_PER_HOUR;
+            const diff = calls - required;
+            const isAchieved = calls >= required;
+            
+            let color = isAchieved ? 'green' : 'red';
+            let symbol = isAchieved ? '✔️' : '❌';
+            
+            statusCell.innerHTML = `<span style="color:${color}; font-weight:bold;">${symbol} (${diff > 0 ? '+' : ''}${diff})</span>`;
+        } else {
+            statusCell.innerHTML = '-';
+        }
+    }
+
+    // 3. حفظ البيانات
+    function saveDailyData() {
+        const date = document.getElementById('currentDate').value;
+        let dailyRecords = [];
+        let hasData = false;
+
+        TEAM_NAMES.forEach((name, index) => {
+            const hours = parseFloat(document.getElementById(`hours_${index}`).value);
+            const calls = parseInt(document.getElementById(`calls_${index}`).value);
+            const note = document.getElementById(`note_${index}`).value;
+
+            // نحفظ فقط الموظف اللي تم إدخال ساعات له
+            if (hours && hours > 0) {
+                hasData = true;
+                const required = hours * TARGET_PER_HOUR;
+                const percent = (calls / required) * 100;
+                
+                dailyRecords.push({
+                    date: date,
+                    name: name,
+                    hours: hours,
+                    calls: calls,
+                    required: required,
+                    percent: percent,
+                    note: note
+                });
+            }
+        });
+
+        if (!hasData) {
+            alert('من فضلك أدخل بيانات لموظف واحد على الأقل');
             return;
         }
 
-        // المعادلة الحسابية
-        const requiredCalls = hours * TARGET_PER_HOUR;
-        const achievementPercent = (calls / requiredCalls) * 100;
-        const isAchieved = calls >= requiredCalls;
-        const diff = calls - requiredCalls; // الفارق (بالسالب أو الموجب)
-
-        const record = {
-            id: Date.now(),
-            date,
-            name,
-            hours,
-            requiredCalls,
-            calls,
-            achievementPercent: achievementPercent.toFixed(1),
-            isAchieved,
-            diff,
-            notes
-        };
-
-        saveRecord(record);
-        renderRow(record);
-        clearInputs();
-    }
-
-    function renderRow(record) {
-        const table = document.getElementById('recordsTable').getElementsByTagName('tbody')[0];
-        const newRow = table.insertRow();
-
-        // تحديد لون الحالة وشريط التقدم
-        const statusClass = record.isAchieved ? 'bg-success' : 'bg-danger';
-        const statusText = record.isAchieved ? 'تم التحقيق' : 'لم يتحقق';
-        const diffText = record.diff > 0 ? `+${record.diff}` : `${record.diff}`;
+        // حفظ في LocalStorage
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
         
-        // لون شريط التقدم يعتمد على النسبة
-        let progressColor = '#e74c3c'; // أحمر
-        if (record.achievementPercent >= 100) progressColor = '#27ae60'; // أخضر
-        else if (record.achievementPercent >= 80) progressColor = '#f39c12'; // برتقالي
-
-        // الحد الأقصى للعرض 100% للشريط
-        const widthPercent = Math.min(record.achievementPercent, 100);
-
-        newRow.innerHTML = `
-            <td>${record.date}</td>
-            <td><strong>${record.name}</strong></td>
-            <td>${record.hours} ساعات</td>
-            <td>${record.requiredCalls}</td>
-            <td>
-                ${record.calls} <small style="color:${record.diff >= 0 ? 'green' : 'red'}">(${diffText})</small>
-            </td>
-            <td>
-                ${record.achievementPercent}%
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: ${widthPercent}%; background-color: ${progressColor};"></div>
-                </div>
-            </td>
-            <td><span class="badge ${statusClass}">${statusText}</span></td>
-            <td class="note-text">${record.notes}</td>
-            <td><button class="delete-btn" onclick="deleteRecord(${record.id}, this)">X</button></td>
-        `;
-
-        updateCount();
+        // مسح أي بيانات قديمة لنفس التاريخ (عشان لو عدلت وحفظت تاني)
+        allHistory = allHistory.filter(record => record.date !== date);
+        
+        // دمج الجديد
+        allHistory = [...allHistory, ...dailyRecords];
+        
+        localStorage.setItem('teamProductivityDB', JSON.stringify(allHistory));
+        
+        alert('تم حفظ البيانات بنجاح ✅');
+        
+        // تصفير الخانات
+        renderEntryTable();
+        // تحديث الجدول التحليلي
+        calculateAndRenderStats();
     }
 
-    function saveRecord(record) {
-        let records = JSON.parse(localStorage.getItem('teamProductivity')) || [];
-        records.push(record);
-        localStorage.setItem('teamProductivity', JSON.stringify(records));
-    }
+    // 4. حساب وعرض الإحصائيات (الأيام، المتوسط)
+    function calculateAndRenderStats() {
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB')) || [];
+        const tbody = document.getElementById('statsBody');
+        tbody.innerHTML = '';
 
-    function loadData() {
-        let records = JSON.parse(localStorage.getItem('teamProductivity')) || [];
-        records.forEach(renderRow);
-        updateCount();
-    }
-
-    function deleteRecord(id, btn) {
-        if(confirm('هل أنت متأكد من حذف هذا السجل؟')) {
-            let records = JSON.parse(localStorage.getItem('teamProductivity')) || [];
-            records = records.filter(r => r.id !== id);
-            localStorage.setItem('teamProductivity', JSON.stringify(records));
+        TEAM_NAMES.forEach(name => {
+            // فلترة سجلات الموظف ده بس
+            const records = allHistory.filter(r => r.name === name);
             
-            // حذف الصف من الجدول
-            const row = btn.parentNode.parentNode;
-            row.parentNode.removeChild(row);
-            updateCount();
+            if (records.length === 0) {
+                // لو ملوش داتا، نكتب أصفار
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${name}</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td><span class="badge" style="background:#ccc">لا يوجد بيانات</span></td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // الحسابات
+            const daysWorked = records.length;
+            const totalHours = records.reduce((sum, r) => sum + r.hours, 0);
+            const totalCalls = records.reduce((sum, r) => sum + r.calls, 0);
+            
+            // حساب متوسط نسبة تحقيق التارجت
+            // نجمع كل النسب المئوية ونقسمها على عدد الأيام
+            const totalPercent = records.reduce((sum, r) => sum + r.percent, 0);
+            const avgPercent = (totalPercent / daysWorked).toFixed(1);
+
+            let badgeClass = '';
+            let badgeText = '';
+
+            if (avgPercent >= 100) {
+                badgeClass = 'b-green';
+                badgeText = 'ممتاز 🌟';
+            } else if (avgPercent >= 85) {
+                badgeClass = 'b-orange';
+                badgeText = 'جيد جداً';
+            } else {
+                badgeClass = 'b-red';
+                badgeText = 'يحتاج تحسين';
+            }
+
+            tbody.innerHTML += `
+                <tr class="row-highlight">
+                    <td style="font-weight:bold;">${name}</td>
+                    <td>${daysWorked} أيام</td>
+                    <td>${totalHours}</td>
+                    <td>${totalCalls}</td>
+                    <td style="direction:ltr">${avgPercent}%</td>
+                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                </tr>
+            `;
+        });
+    }
+
+    // 5. مسح كل شيء (زرار خطر)
+    function clearAllData() {
+        if(confirm('هل أنت متأكد من مسح جميع البيانات السابقة؟ لا يمكن التراجع.')) {
+            localStorage.removeItem('teamProductivityDB');
+            calculateAndRenderStats();
+            alert('تم مسح البيانات');
         }
-    }
-
-    function updateCount() {
-        const count = document.getElementById('recordsTable').getElementsByTagName('tbody')[0].rows.length;
-        document.getElementById('totalRecords').innerText = `عدد السجلات: ${count}`;
-    }
-
-    function clearInputs() {
-        document.getElementById('nameInput').value = '';
-        document.getElementById('hoursInput').value = '';
-        document.getElementById('callsInput').value = '';
-        document.getElementById('notesInput').value = '';
     }
 </script>
 
