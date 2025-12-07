@@ -3,42 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Productivity Pro - Final</title>
+    <title>Team Productivity - V6 (Dark Mode)</title>
     <style>
         :root {
+            /* الألوان الفاتحة (الافتراضي) */
             --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #333;
             --primary: #2c3e50;
             --accent: #3498db;
-            --white: #ffffff;
+            --border: #dfe6e9;
+            --input-bg: #ffffff;
+            --th-bg: #f8f9fa;
             --green: #27ae60;
             --red: #c0392b;
             --orange: #f39c12;
             --purple: #8e44ad;
             --grey: #95a5a6;
-            --border: #dfe6e9;
+            --dark-blue: #34495e;
+            --shadow: rgba(0,0,0,0.05);
+        }
+
+        /* متغيرات الوضع الليلي */
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary: #ecf0f1;
+            --accent: #5dade2;
+            --border: #333;
+            --input-bg: #2d2d2d;
+            --th-bg: #2c2c2c;
+            --shadow: rgba(0,0,0,0.5);
+            --dark-blue: #2c3e50;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
-            color: #333;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container { max-width: 1250px; margin: 0 auto; }
 
-        header { text-align: center; margin-bottom: 30px; }
+        header { text-align: center; margin-bottom: 30px; position: relative; }
         h1 { color: var(--primary); margin: 0; font-size: 1.8rem; }
         p { color: #7f8c8d; }
 
+        /* زرار الوضع الليلي */
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px var(--shadow);
+            transition: 0.3s;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+
         .card {
-            background: var(--white);
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 1px solid var(--border);
         }
+
+        /* شريط النسخ الاحتياطي */
+        .backup-bar {
+            background: var(--dark-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .backup-title { font-weight: bold; display: flex; align-items: center; gap: 5px; }
 
         .card-header {
             display: flex;
@@ -52,43 +109,42 @@
         }
 
         .card-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
-
         .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         
         input, select {
             padding: 8px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border);
             border-radius: 5px;
             font-family: inherit;
+            background-color: var(--input-bg);
+            color: var(--text-color);
         }
 
-        /* تنسيق خاص لفلتر الشهر */
-        .month-picker {
-            border: 2px solid var(--accent);
-            padding: 8px;
-            font-weight: bold;
-            color: var(--primary);
-            background: #eaf2f8;
-        }
+        .month-picker { border: 2px solid var(--accent); background: var(--bg-color); font-weight: bold; color: var(--primary); }
 
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        th { background-color: #f8f9fa; color: var(--primary); font-weight: 600; }
-        tr:hover { background-color: #fafafa; }
+        th { background-color: var(--th-bg); color: var(--primary); font-weight: 600; }
+        tr:hover { background-color: var(--bg-color); }
 
         .input-mini { width: 60px; text-align: center; }
         .input-note { width: 100%; min-width: 150px; }
         select.status-select { width: 110px; font-size: 0.9em; }
 
         button { cursor: pointer; border: none; border-radius: 5px; padding: 8px 15px; font-family: inherit; transition: 0.3s; font-weight: 600; }
-        .btn-save { background-color: var(--primary); color: white; width: 100%; padding: 12px; margin-top: 20px; font-size: 1rem; }
-        .btn-save:hover { background-color: #1a252f; }
-        .btn-filter { background-color: var(--accent); color: white; }
-        .btn-excel-daily { background-color: var(--green); color: white; }
-        .btn-excel-monthly { background-color: var(--purple); color: white; }
-        .btn-reset { background-color: #7f8c8d; color: white; } /* للإلغاء فقط */
+        .btn-save { background-color: var(--primary); color: var(--bg-color); width: 100%; padding: 12px; margin-top: 20px; font-size: 1rem; }
+        .btn-save:hover { opacity: 0.9; }
         
+        .btn-backup { background-color: var(--orange); color: white; }
+        .btn-restore { background-color: var(--green); color: white; position: relative; overflow: hidden; }
+        .btn-restore input[type="file"] { position: absolute; top: 0; right: 0; min-width: 100%; min-height: 100%; font-size: 100px; text-align: right; filter: alpha(opacity=0); opacity: 0; outline: none; background: white; cursor: inherit; display: block; }
+        
+        .btn-excel-monthly { background-color: var(--purple); color: white; }
+        .btn-excel-daily { background-color: var(--green); color: white; }
+        .btn-filter { background-color: var(--accent); color: white; }
+        .btn-reset { background-color: var(--grey); color: white; }
+
         .action-btn { padding: 4px 8px; font-size: 0.9rem; margin-left: 5px; color: white; border-radius: 4px; }
         .edit-btn { background-color: var(--orange); }
         .del-btn { background-color: var(--red); }
@@ -100,25 +156,26 @@
         .b-grey { background: var(--grey); }
         .b-purple { background: var(--purple); }
 
-        .row-highlight { background-color: #e8f8f5; }
+        .row-highlight { background-color: rgba(52, 152, 219, 0.1) !important; }
 
         .modal-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000;
+            background: rgba(0,0,0,0.7); z-index: 1000;
             justify-content: center; align-items: center;
         }
         .modal-content {
-            background: white; padding: 25px; border-radius: 10px; width: 400px; max-width: 90%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            background: var(--card-bg); padding: 25px; border-radius: 10px; width: 400px; max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             animation: fadeIn 0.3s;
+            color: var(--text-color);
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         
         .modal-header { font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        .form-group input, .form-group select { width: 100%; box-sizing: border-box; padding: 10px; }
+        .form-group input, .form-group select { width: 100%; box-sizing: border-box; padding: 10px; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border); }
         .modal-actions { display: flex; gap: 10px; margin-top: 25px; }
     </style>
 </head>
@@ -126,9 +183,21 @@
 
 <div class="container">
     <header>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
         <h1>🚀 Productivity Tracker</h1>
         <p>RETENTION TEAM</p>
     </header>
+
+    <div class="backup-bar">
+        <div class="backup-title">🛡️ منطقة الأمان</div>
+        <div class="controls">
+            <button class="btn-backup" onclick="downloadBackup()">💾 تحميل نسخة احتياطية</button>
+            <button class="btn-restore">
+                ♻️ استرجاع بيانات
+                <input type="file" id="restoreFile" accept=".json" onchange="restoreBackup(this)">
+            </button>
+        </div>
+    </div>
 
     <div class="card">
         <div class="card-header">
@@ -185,7 +254,7 @@
 
     <div class="card">
         <div class="card-header">
-            <span class="card-title">📅 أرشيف العمليات (السجل الكامل)</span>
+            <span class="card-title">📅 أرشيف العمليات</span>
             <div class="controls">
                 <input type="date" id="filterDate">
                 <select id="filterName">
@@ -224,11 +293,11 @@
         
         <div class="form-group">
             <label>اسم الموظف:</label>
-            <input type="text" id="editName" disabled style="background:#eee">
+            <input type="text" id="editName" disabled style="background:var(--bg-color); color:var(--text-color);">
         </div>
         <div class="form-group">
             <label>التاريخ:</label>
-            <input type="date" id="editDate" disabled style="background:#eee">
+            <input type="date" id="editDate" disabled style="background:var(--bg-color); color:var(--text-color);">
         </div>
         <div class="form-group">
             <label>الحالة:</label>
@@ -261,19 +330,22 @@
 </div>
 
 <script>
+    // --- ثوابت وإعدادات ---
+    const DB_KEY = 'teamProductivityDB_Final_V6'; 
     const TEAM_NAMES = ["Nada", "Mayada", "Mohamed", "Mohamed Ashraf", "Hany", "Hesham", "Awad", "Nehal", "Abdelghany"];
     const TARGET_PER_HOUR = 17;
 
     document.addEventListener('DOMContentLoaded', () => {
-        // تعيين تاريخ اليوم
-        document.getElementById('currentDate').valueAsDate = new Date();
-        
-        // تعيين الشهر الحالي في تقرير الشهر
-        const now = new Date();
-        const monthStr = now.toISOString().slice(0, 7); // YYYY-MM
-        document.getElementById('reportMonth').value = monthStr;
+        // 1. تفعيل الوضع الليلي لو محفوظ
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeBtn').textContent = '☀️';
+        }
 
-        // تعبئة الأسماء
+        document.getElementById('currentDate').valueAsDate = new Date();
+        const now = new Date();
+        document.getElementById('reportMonth').value = now.toISOString().slice(0, 7);
+
         const nameSelect = document.getElementById('filterName');
         TEAM_NAMES.forEach(name => {
             const option = document.createElement('option');
@@ -287,7 +359,62 @@
         calculateAndRenderStats();
     });
 
-    // --- 1. الإدخال ---
+    // --- وظيفة الوضع الليلي ---
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            btn.textContent = '☀️';
+        } else {
+            localStorage.setItem('theme', 'light');
+            btn.textContent = '🌙';
+        }
+    }
+
+    // --- 1. النسخ الاحتياطي (Backup & Restore) ---
+    function downloadBackup() {
+        const data = localStorage.getItem(DB_KEY);
+        if (!data || data === '[]') { alert('لا توجد بيانات لحفظها!'); return; }
+
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const date = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `Team_Backup_${date}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function restoreBackup(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        if (!confirm('⚠️ تحذير: سيتم استبدال البيانات الحالية بالنسخة المحملة. هل أنت متأكد؟')) {
+            input.value = ''; 
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (Array.isArray(data)) {
+                    localStorage.setItem(DB_KEY, JSON.stringify(data));
+                    alert('✅ تم استرجاع البيانات بنجاح!');
+                    location.reload(); 
+                } else { alert('❌ الملف غير صالح'); }
+            } catch (err) { alert('❌ حدث خطأ أثناء قراءة الملف'); }
+        };
+        reader.readAsText(file);
+    }
+
+    // --- 2. الإدخال ---
     function renderEntryTable() {
         const tbody = document.getElementById('entryTableBody');
         tbody.innerHTML = '';
@@ -320,18 +447,14 @@
         const previewCell = document.getElementById(`preview_${index}`);
 
         if (status !== 'working') {
-            hoursInput.value = '';
-            callsInput.value = '';
-            hoursInput.disabled = true;
-            callsInput.disabled = true;
-            hoursInput.style.backgroundColor = '#eee';
-            callsInput.style.backgroundColor = '#eee';
-            previewCell.innerHTML = '<span style="color:#95a5a6">إجازة/غياب</span>';
+            hoursInput.value = ''; callsInput.value = '';
+            hoursInput.disabled = true; callsInput.disabled = true;
+            // بنستخدم الشفافية عشان تتوافق مع الوضع الليلي
+            hoursInput.style.opacity = '0.5'; callsInput.style.opacity = '0.5';
+            previewCell.innerHTML = '<span style="color:var(--grey)">إجازة/غياب</span>';
         } else {
-            hoursInput.disabled = false;
-            callsInput.disabled = false;
-            hoursInput.style.backgroundColor = 'white';
-            callsInput.style.backgroundColor = 'white';
+            hoursInput.disabled = false; callsInput.disabled = false;
+            hoursInput.style.opacity = '1'; callsInput.style.opacity = '1';
             previewCell.innerHTML = '-';
         }
     }
@@ -340,16 +463,13 @@
         const hours = parseFloat(document.getElementById(`hours_${index}`).value) || 0;
         const calls = parseInt(document.getElementById(`calls_${index}`).value) || 0;
         const previewCell = document.getElementById(`preview_${index}`);
-
         if (hours > 0) {
             const required = hours * TARGET_PER_HOUR;
             const diff = calls - required;
             const isAchieved = calls >= required;
-            let color = isAchieved ? 'green' : 'red';
+            let color = isAchieved ? 'var(--green)' : 'var(--red)';
             previewCell.innerHTML = `<span style="color:${color}; font-weight:bold;">${isAchieved ? '✔️' : '❌'} (${diff > 0 ? '+' : ''}${diff})</span>`;
-        } else {
-            previewCell.innerHTML = '-';
-        }
+        } else { previewCell.innerHTML = '-'; }
     }
 
     function saveDailyData() {
@@ -365,53 +485,39 @@
 
             if (status !== 'working' || (status === 'working' && hours > 0)) {
                 hasData = true;
-                
-                let required = 0;
-                let percent = 0;
-
+                let required = 0; let percent = 0;
                 if (status === 'working') {
                     required = hours * TARGET_PER_HOUR;
                     percent = (calls / required) * 100;
                 }
-
                 dailyRecords.push({
-                    id: Date.now() + index, 
-                    date: date,
-                    name: name,
-                    status: status,
-                    hours: hours,
-                    calls: calls,
-                    required: required,
-                    percent: percent,
-                    note: note
+                    id: Date.now() + index, date, name, status, hours, calls, required, percent, note
                 });
             }
         });
 
-        if (!hasData) { alert('لم يتم إدخال أي بيانات!'); return; }
+        if (!hasData) { alert('لم يتم إدخال بيانات!'); return; }
 
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
+        let allHistory = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         allHistory = allHistory.filter(r => r.date !== date); 
-        
         allHistory = [...allHistory, ...dailyRecords];
-        localStorage.setItem('teamProductivityDB_Final', JSON.stringify(allHistory));
+        localStorage.setItem(DB_KEY, JSON.stringify(allHistory));
         
-        alert('✅ تم الحفظ! سيتم تحديث التقارير.');
+        alert('✅ تم الحفظ بنجاح!');
         renderEntryTable();
         renderHistoryTable();
         calculateAndRenderStats();
     }
 
-    // --- 2. الأرشيف ---
+    // --- 3. الأرشيف ---
     function renderHistoryTable() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
+        let allHistory = JSON.parse(localStorage.getItem(DB_KEY)) || [];
         const filterDate = document.getElementById('filterDate').value;
         const filterName = document.getElementById('filterName').value;
         const tbody = document.getElementById('historyBody');
         tbody.innerHTML = '';
 
         allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-
         if (filterDate) allHistory = allHistory.filter(r => r.date === filterDate);
         if (filterName) allHistory = allHistory.filter(r => r.name === filterName);
 
@@ -421,30 +527,24 @@
         }
 
         allHistory.forEach(r => {
-            let statusBadge = '';
-            let details = '';
-            
+            let statusBadge = '', details = '';
             if (r.status === 'working') {
                 const isAchieved = r.calls >= r.required;
                 const diff = r.calls - r.required;
                 const badgeClass = isAchieved ? 'b-green' : 'b-red';
-                const badgeText = isAchieved ? 'تم' : 'لم يتم';
-                statusBadge = `<span class="badge ${badgeClass}">${badgeText}</span>`;
-                details = `<td>${r.hours}</td><td>${r.required}</td><td>${r.calls} <small style="color:${isAchieved?'green':'red'}">(${diff > 0 ? '+' : ''}${diff})</small></td><td>${r.percent.toFixed(1)}%</td>`;
+                statusBadge = `<span class="badge ${badgeClass}">${isAchieved ? 'تم' : 'لم يتم'}</span>`;
+                details = `<td>${r.hours}</td><td>${r.required}</td><td>${r.calls} <small style="color:${isAchieved?'var(--green)':'var(--red)'}">(${diff > 0 ? '+' : ''}${diff})</small></td><td>${r.percent.toFixed(1)}%</td>`;
             } else {
                 let label = r.status === 'vacation' ? 'إجازة سنوي' : (r.status === 'sick' ? 'إجازة مرضي' : (r.status === 'absent' ? 'غياب' : 'Day Off'));
                 let colorClass = r.status === 'vacation' ? 'b-purple' : (r.status === 'sick' || r.status === 'absent' ? 'b-red' : 'b-grey');
                 statusBadge = `<span class="badge ${colorClass}">${label}</span>`;
-                details = `<td colspan="4" style="text-align:center; color:#7f8c8d;">-- ${label} --</td>`;
+                details = `<td colspan="4" style="text-align:center; color:var(--grey);">-- ${label} --</td>`;
             }
 
             tbody.innerHTML += `
                 <tr>
-                    <td>${r.date}</td>
-                    <td><strong>${r.name}</strong></td>
-                    <td>${statusBadge}</td>
-                    ${details}
-                    <td style="font-size:0.9em; color:#666;">${r.note}</td>
+                    <td>${r.date}</td><td><strong>${r.name}</strong></td><td>${statusBadge}</td>${details}
+                    <td style="font-size:0.9em;">${r.note}</td>
                     <td>
                         <button class="action-btn edit-btn" onclick="openEditModal(${r.id})">✏️</button>
                         <button class="action-btn del-btn" onclick="deleteRecord(${r.id})">X</button>
@@ -453,181 +553,152 @@
             `;
         });
     }
-
+    
     function resetFilter() {
         document.getElementById('filterDate').value = '';
         document.getElementById('filterName').value = '';
         renderHistoryTable();
     }
 
-    // --- 3. التعديل ---
+    function deleteRecord(id) {
+        if(confirm('حذف هذا السجل؟')) {
+            let all = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+            all = all.filter(r => r.id !== Number(id));
+            localStorage.setItem(DB_KEY, JSON.stringify(all));
+            renderHistoryTable(); calculateAndRenderStats();
+        }
+    }
+
+    // --- 4. التعديل ---
     function openEditModal(id) {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
-        const record = allHistory.find(r => r.id === Number(id));
-        if(!record) return;
-
-        document.getElementById('editId').value = record.id;
-        document.getElementById('editName').value = record.name;
-        document.getElementById('editDate').value = record.date;
-        document.getElementById('editStatus').value = record.status || 'working';
-        document.getElementById('editHours').value = record.hours;
-        document.getElementById('editCalls').value = record.calls;
-        document.getElementById('editNote').value = record.note;
-
+        let all = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const r = all.find(rec => rec.id === Number(id));
+        if(!r) return;
+        
+        document.getElementById('editId').value = r.id;
+        document.getElementById('editName').value = r.name;
+        document.getElementById('editDate').value = r.date;
+        document.getElementById('editStatus').value = r.status || 'working';
+        document.getElementById('editHours').value = r.hours;
+        document.getElementById('editCalls').value = r.calls;
+        document.getElementById('editNote').value = r.note;
         toggleEditInputs();
         document.getElementById('editModal').style.display = 'flex';
     }
-
     function toggleEditInputs() {
-        const status = document.getElementById('editStatus').value;
-        const hours = document.getElementById('editHours');
-        const calls = document.getElementById('editCalls');
-
-        if(status !== 'working') {
-            hours.disabled = true; calls.disabled = true;
-            hours.style.background = '#eee'; calls.style.background = '#eee';
-            hours.value = 0; calls.value = 0;
-        } else {
-            hours.disabled = false; calls.disabled = false;
-            hours.style.background = 'white'; calls.style.background = 'white';
+        const s = document.getElementById('editStatus').value;
+        const h = document.getElementById('editHours');
+        const c = document.getElementById('editCalls');
+        if(s!=='working'){ 
+            h.disabled=true; c.disabled=true; 
+            h.style.opacity='0.5'; c.style.opacity='0.5'; 
+            h.value=0; c.value=0; 
+        } else { 
+            h.disabled=false; c.disabled=false; 
+            h.style.opacity='1'; c.style.opacity='1'; 
         }
     }
-
-    function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-
+    function closeModal(){ document.getElementById('editModal').style.display='none'; }
     function saveEdit() {
         const id = Number(document.getElementById('editId').value);
         const status = document.getElementById('editStatus').value;
-        const hours = parseFloat(document.getElementById('editHours').value) || 0;
-        const calls = parseInt(document.getElementById('editCalls').value) || 0;
+        const hours = parseFloat(document.getElementById('editHours').value)||0;
+        const calls = parseInt(document.getElementById('editCalls').value)||0;
         const note = document.getElementById('editNote').value;
-
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
-        const index = allHistory.findIndex(r => r.id === id);
         
-        if(index !== -1) {
-            let required = 0; let percent = 0;
-            if (status === 'working') {
-                if (hours <= 0) { alert('أدخل الساعات'); return; }
-                required = hours * TARGET_PER_HOUR;
-                percent = (calls / required) * 100;
+        let all = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const idx = all.findIndex(r => r.id === id);
+        if(idx !== -1) {
+            let req=0, per=0;
+            if(status==='working'){
+                if(hours<=0){alert('أدخل الساعات'); return;}
+                req = hours*TARGET_PER_HOUR; per = (calls/req)*100;
             }
-            allHistory[index] = { ...allHistory[index], status, hours, calls, required, percent, note };
-            localStorage.setItem('teamProductivityDB_Final', JSON.stringify(allHistory));
-            closeModal();
-            renderHistoryTable();
-            calculateAndRenderStats();
-            alert('تم التعديل ✅');
+            all[idx] = {...all[idx], status, hours, calls, required:req, percent:per, note};
+            localStorage.setItem(DB_KEY, JSON.stringify(all));
+            closeModal(); renderHistoryTable(); calculateAndRenderStats(); alert('تم التعديل ✅');
         }
     }
 
-    function deleteRecord(id) {
-        if(confirm('حذف هذا السجل؟')) {
-            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
-            allHistory = allHistory.filter(r => r.id !== Number(id));
-            localStorage.setItem('teamProductivityDB_Final', JSON.stringify(allHistory));
-            renderHistoryTable();
-            calculateAndRenderStats();
-        }
-    }
-
-    // --- 4. التقرير الشهري الذكي ---
+    // --- 5. التقرير ---
     function calculateAndRenderStats() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
-        const selectedMonth = document.getElementById('reportMonth').value; 
+        let all = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const month = document.getElementById('reportMonth').value;
         const tbody = document.getElementById('statsBody');
         tbody.innerHTML = '';
-
-        const monthlyRecords = allHistory.filter(r => r.date.startsWith(selectedMonth));
-
+        
+        const monthly = all.filter(r => r.date.startsWith(month));
+        
         TEAM_NAMES.forEach(name => {
-            const records = monthlyRecords.filter(r => r.name === name);
-            
-            if (records.length === 0) {
-                tbody.innerHTML += `<tr><td>${name}</td><td colspan="6" style="text-align:center; color:#ccc;">- لا توجد بيانات لهذا الشهر -</td></tr>`;
+            const recs = monthly.filter(r => r.name === name);
+            if(recs.length === 0) {
+                tbody.innerHTML += `<tr><td>${name}</td><td colspan="6" style="text-align:center; color:var(--grey);">-</td></tr>`;
                 return;
             }
-
-            const workRecords = records.filter(r => r.status === 'working');
-            const leaveRecords = records.filter(r => r.status !== 'working');
-
-            const daysWorked = workRecords.length;
-            const daysLeave = leaveRecords.length;
-            const totalHours = workRecords.reduce((sum, r) => sum + r.hours, 0);
-            const totalCalls = workRecords.reduce((sum, r) => sum + r.calls, 0);
-            const totalPercent = workRecords.reduce((sum, r) => sum + r.percent, 0);
-            const avgPercent = daysWorked > 0 ? (totalPercent / daysWorked).toFixed(1) : 0;
-
-            let badgeClass = avgPercent >= 100 ? 'b-green' : (avgPercent >= 85 ? 'b-orange' : 'b-red');
-            let badgeText = avgPercent >= 100 ? 'ممتاز' : (avgPercent >= 85 ? 'جيد جداً' : 'ضعيف');
-            if(daysWorked === 0) { badgeClass = 'b-grey'; badgeText = 'لا يوجد عمل'; }
-
+            const work = recs.filter(r => r.status === 'working');
+            const leave = recs.filter(r => r.status !== 'working');
+            
+            const daysW = work.length;
+            const daysL = leave.length;
+            const hrs = work.reduce((s,r)=>s+r.hours,0);
+            const cls = work.reduce((s,r)=>s+r.calls,0);
+            const totalP = work.reduce((s,r)=>s+r.percent,0);
+            const avg = daysW > 0 ? (totalP/daysW).toFixed(1) : 0;
+            
+            let clsName = avg>=100?'b-green':(avg>=85?'b-orange':'b-red');
+            let txt = avg>=100?'ممتاز':(avg>=85?'جيد جداً':'ضعيف');
+            if(daysW===0){ clsName='b-grey'; txt='لا يوجد عمل'; }
+            
             tbody.innerHTML += `
                 <tr class="row-highlight">
                     <td style="font-weight:bold;">${name}</td>
-                    <td>${daysWorked}</td>
-                    <td>${daysLeave}</td>
-                    <td>${totalHours}</td>
-                    <td>${totalCalls}</td>
-                    <td style="direction:ltr">${avgPercent}%</td>
-                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                    <td>${daysW}</td><td>${daysL}</td><td>${hrs}</td><td>${cls}</td>
+                    <td style="direction:ltr">${avg}%</td>
+                    <td><span class="badge ${clsName}">${txt}</span></td>
                 </tr>
             `;
         });
     }
 
-    // تصدير إكسيل حسب الشهر المختار
+    // --- 6. التصدير ---
     function exportMonthlyToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
-        const selectedMonth = document.getElementById('reportMonth').value;
-        const monthlyRecords = allHistory.filter(r => r.date.startsWith(selectedMonth));
-
-        if(monthlyRecords.length === 0) { alert('لا توجد بيانات لهذا الشهر للتصدير'); return; }
-
-        let csvContent = "\uFEFF"; 
-        csvContent += `تقرير شهر ${selectedMonth}\n`;
-        csvContent += "الاسم,أيام العمل,أيام الإجازات,إجمالي الساعات,إجمالي المكالمات,متوسط الأداء\n";
-
+        let all = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const month = document.getElementById('reportMonth').value;
+        const monthly = all.filter(r => r.date.startsWith(month));
+        if(monthly.length===0){alert('لا توجد بيانات'); return;}
+        
+        let csv = "\uFEFFتقرير شهر " + month + "\nالاسم,أيام العمل,إجازات,ساعات,مكالمات,متوسط\n";
         TEAM_NAMES.forEach(name => {
-            const records = monthlyRecords.filter(r => r.name === name);
-            if(records.length > 0) {
-                const workRecords = records.filter(r => r.status === 'working');
-                const daysWorked = workRecords.length;
-                const daysLeave = records.filter(r => r.status !== 'working').length;
-                const totalHours = workRecords.reduce((s, r) => s + r.hours, 0);
-                const totalCalls = workRecords.reduce((s, r) => s + r.calls, 0);
-                const totalPercent = workRecords.reduce((s, r) => s + r.percent, 0);
-                const avg = daysWorked > 0 ? (totalPercent / daysWorked).toFixed(1) : 0;
-
-                let row = `${name},${daysWorked},${daysLeave},${totalHours},${totalCalls},${avg}%`;
-                csvContent += row + "\n";
+            const r = monthly.filter(x => x.name === name);
+            if(r.length>0){
+                const w = r.filter(x => x.status==='working');
+                const daysW = w.length;
+                const daysL = r.length - daysW;
+                const hrs = w.reduce((a,b)=>a+b.hours,0);
+                const cls = w.reduce((a,b)=>a+b.calls,0);
+                const avg = daysW>0 ? (w.reduce((a,b)=>a+b.percent,0)/daysW).toFixed(1) : 0;
+                csv += `${name},${daysW},${daysL},${hrs},${cls},${avg}%\n`;
             }
         });
-
-        downloadCSV(csvContent, `Monthly_Report_${selectedMonth}.csv`);
+        dlCSV(csv, `Monthly_Report_${month}.csv`);
     }
 
     function exportDailyToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
-        if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
-
-        let csvContent = "\uFEFF"; 
-        csvContent += "التاريخ,الاسم,الحالة,ساعات العمل,التارجت,المحقق,النسبة %,ملاحظات\n";
-        allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        allHistory.forEach(r => {
-            let statusText = r.status === 'working' ? 'عمل' : (r.status === 'vacation' ? 'إجازة سنوي' : 'غياب/أخرى');
-            let row = `${r.date},${r.name},${statusText},${r.hours},${r.required},${r.calls},${r.percent ? r.percent.toFixed(1) : 0}%,${r.note}`;
-            csvContent += row + "\n";
+        let all = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        if(all.length===0){alert('لا توجد بيانات'); return;}
+        let csv = "\uFEFFالتاريخ,الاسم,الحالة,ساعات,تارجت,محقق,نسبة,ملاحظات\n";
+        all.sort((a,b)=>new Date(b.date)-new Date(a.date));
+        all.forEach(r => {
+            let st = r.status==='working'?'عمل':r.status;
+            csv += `${r.date},${r.name},${st},${r.hours},${r.required},${r.calls},${r.percent?r.percent.toFixed(1):0}%,${r.note}\n`;
         });
-        downloadCSV(csvContent, "Full_History_Log.csv");
+        dlCSV(csv, "Full_History.csv");
     }
 
-    function downloadCSV(content, fileName) {
-        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + content);
+    function dlCSV(content, name) {
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", fileName);
+        link.href = encodeURI("data:text/csv;charset=utf-8," + content);
+        link.download = name;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
