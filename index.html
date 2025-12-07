@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Productivity Pro - V3</title>
+    <title>Team Productivity Pro - V4</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -53,7 +53,6 @@
 
         .card-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
 
-        /* أدوات التحكم */
         .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         
         input, select {
@@ -63,7 +62,15 @@
             font-family: inherit;
         }
 
-        /* الجداول */
+        /* تنسيق خاص لفلتر الشهر */
+        .month-picker {
+            border: 2px solid var(--accent);
+            padding: 8px;
+            font-weight: bold;
+            color: var(--primary);
+            background: #eaf2f8;
+        }
+
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th, td { padding: 12px 10px; text-align: right; border-bottom: 1px solid var(--border); vertical-align: middle; }
@@ -74,7 +81,6 @@
         .input-note { width: 100%; min-width: 150px; }
         select.status-select { width: 110px; font-size: 0.9em; }
 
-        /* الأزرار */
         button { cursor: pointer; border: none; border-radius: 5px; padding: 8px 15px; font-family: inherit; transition: 0.3s; font-weight: 600; }
         .btn-save { background-color: var(--primary); color: white; width: 100%; padding: 12px; margin-top: 20px; font-size: 1rem; }
         .btn-save:hover { background-color: #1a252f; }
@@ -83,22 +89,19 @@
         .btn-excel-daily { background-color: var(--green); color: white; }
         .btn-excel-monthly { background-color: var(--purple); color: white; }
         
-        /* أيقونات الجدول */
         .action-btn { padding: 4px 8px; font-size: 0.9rem; margin-left: 5px; color: white; border-radius: 4px; }
         .edit-btn { background-color: var(--orange); }
         .del-btn { background-color: var(--red); }
 
-        /* البادجات */
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white; display: inline-block; min-width: 60px; text-align: center; }
         .b-green { background: var(--green); }
         .b-red { background: var(--red); }
         .b-orange { background: var(--orange); }
-        .b-grey { background: var(--grey); } /* للإجازات */
-        .b-purple { background: var(--purple); } /* للإجازات السنوية */
+        .b-grey { background: var(--grey); }
+        .b-purple { background: var(--purple); }
 
         .row-highlight { background-color: #e8f8f5; }
 
-        /* النافذة المنبثقة (Modal) */
         .modal-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -123,15 +126,15 @@
 
 <div class="container">
     <header>
-        <h1>🚀 Productivity Tracker</h1>
-        <p>Retention Team</p>
+        <h1>🚀 Productivity Tracker </h1>
+        <p>RETENTION TEAM</p>
     </header>
 
     <div class="card">
         <div class="card-header">
             <span class="card-title">📝 إدخال بيانات اليوم</span>
             <div class="controls">
-                <label>التاريخ:</label>
+                <label>تاريخ الإدخال:</label>
                 <input type="date" id="currentDate">
             </div>
         </div>
@@ -153,12 +156,13 @@
         <button class="btn-save" onclick="saveDailyData()">💾 حفظ بيانات اليوم</button>
     </div>
 
-    <div class="card">
+    <div class="card" style="border-top: 5px solid var(--purple);">
         <div class="card-header">
-            <span class="card-title">📊 التقرير التراكمي (الشهر)</span>
+            <span class="card-title">📊 التقرير الشهري</span>
             <div class="controls">
-                <button class="btn-excel-monthly" onclick="exportMonthlyToExcel()">📥 تصدير التقرير الشهري</button>
-                <button class="btn-reset" onclick="clearAllData()">🗑️ مسح الكل</button>
+                <label>عرض شهر:</label>
+                <input type="month" id="reportMonth" class="month-picker" onchange="calculateAndRenderStats()">
+                <button class="btn-excel-monthly" onclick="exportMonthlyToExcel()">📥 تصدير تقرير هذا الشهر</button>
             </div>
         </div>
         <div class="table-responsive">
@@ -166,8 +170,8 @@
                 <thead>
                     <tr>
                         <th>الاسم</th>
-                        <th>أيام العمل الفعلي</th>
-                        <th>أيام الإجازات/الغياب</th>
+                        <th>أيام العمل</th>
+                        <th>أيام الإجازات</th>
                         <th>إجمالي الساعات</th>
                         <th>إجمالي المكالمات</th>
                         <th>متوسط الأداء %</th>
@@ -181,7 +185,7 @@
 
     <div class="card">
         <div class="card-header">
-            <span class="card-title">📅 أرشيف العمليات اليومية</span>
+            <span class="card-title">📅 أرشيف العمليات (السجل الكامل)</span>
             <div class="controls">
                 <input type="date" id="filterDate">
                 <select id="filterName">
@@ -189,7 +193,7 @@
                 </select>
                 <button class="btn-filter" onclick="renderHistoryTable()">🔍 بحث</button>
                 <button class="btn-filter" onclick="resetFilter()" style="background:#7f8c8d">إلغاء</button>
-                <button class="btn-excel-daily" onclick="exportDailyToExcel()">📥 تصدير السجل اليومي</button>
+                <button class="btn-excel-daily" onclick="exportDailyToExcel()">📥 تصدير السجل</button>
             </div>
         </div>
         <div class="table-responsive">
@@ -209,6 +213,9 @@
                 </thead>
                 <tbody id="historyBody"></tbody>
             </table>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+            <button class="btn-reset" onclick="clearAllData()">⚠️ فرمتة النظام (حذف جميع البيانات نهائياً)</button>
         </div>
     </div>
 </div>
@@ -261,8 +268,15 @@
     const TARGET_PER_HOUR = 17;
 
     document.addEventListener('DOMContentLoaded', () => {
+        // تعيين تاريخ اليوم
         document.getElementById('currentDate').valueAsDate = new Date();
         
+        // تعيين الشهر الحالي في تقرير الشهر
+        const now = new Date();
+        const monthStr = now.toISOString().slice(0, 7); // YYYY-MM
+        document.getElementById('reportMonth').value = monthStr;
+
+        // تعبئة الأسماء
         const nameSelect = document.getElementById('filterName');
         TEAM_NAMES.forEach(name => {
             const option = document.createElement('option');
@@ -352,7 +366,6 @@
             const calls = parseInt(document.getElementById(`calls_${index}`).value) || 0;
             const note = document.getElementById(`note_${index}`).value;
 
-            // نحفظ لو هو شغال وعنده ساعات، أو لو هو واخد إجازة/غياب
             if (status !== 'working' || (status === 'working' && hours > 0)) {
                 hasData = true;
                 
@@ -368,7 +381,7 @@
                     id: Date.now() + index, 
                     date: date,
                     name: name,
-                    status: status, // working, vacation, etc.
+                    status: status,
                     hours: hours,
                     calls: calls,
                     required: required,
@@ -378,24 +391,23 @@
             }
         });
 
-        if (!hasData) { alert('لم يتم إدخال أي بيانات! يرجى إدخال ساعات عمل أو تسجيل إجازات.'); return; }
+        if (!hasData) { alert('لم يتم إدخال أي بيانات!'); return; }
 
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
-        // إزالة السجلات السابقة لنفس اليوم لنفس الأشخاص (تحديث)
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
         allHistory = allHistory.filter(r => r.date !== date); 
         
         allHistory = [...allHistory, ...dailyRecords];
-        localStorage.setItem('teamProductivityDB_V3', JSON.stringify(allHistory));
+        localStorage.setItem('teamProductivityDB_V4', JSON.stringify(allHistory));
         
-        alert('✅ تم الحفظ بنجاح!');
+        alert('✅ تم الحفظ! سيتم تحديث التقارير.');
         renderEntryTable();
         renderHistoryTable();
         calculateAndRenderStats();
     }
 
-    // --- 2. الأرشيف والفلتر ---
+    // --- 2. الأرشيف ---
     function renderHistoryTable() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
         const filterDate = document.getElementById('filterDate').value;
         const filterName = document.getElementById('filterName').value;
         const tbody = document.getElementById('historyBody');
@@ -415,29 +427,16 @@
             let statusBadge = '';
             let details = '';
             
-            // تحديد شكل الصف بناء على الحالة
             if (r.status === 'working') {
                 const isAchieved = r.calls >= r.required;
                 const diff = r.calls - r.required;
                 const badgeClass = isAchieved ? 'b-green' : 'b-red';
                 const badgeText = isAchieved ? 'تم' : 'لم يتم';
                 statusBadge = `<span class="badge ${badgeClass}">${badgeText}</span>`;
-                
-                details = `
-                    <td>${r.hours}</td>
-                    <td>${r.required}</td>
-                    <td>${r.calls} <small style="color:${isAchieved?'green':'red'}">(${diff > 0 ? '+' : ''}${diff})</small></td>
-                    <td>${r.percent.toFixed(1)}%</td>
-                `;
+                details = `<td>${r.hours}</td><td>${r.required}</td><td>${r.calls} <small style="color:${isAchieved?'green':'red'}">(${diff > 0 ? '+' : ''}${diff})</small></td><td>${r.percent.toFixed(1)}%</td>`;
             } else {
-                // حالات الإجازة والغياب
-                let label = '';
-                let colorClass = 'b-grey';
-                if(r.status === 'vacation') { label = 'إجازة سنوي'; colorClass = 'b-purple'; }
-                else if(r.status === 'sick') { label = 'إجازة مرضي'; colorClass = 'b-red'; }
-                else if(r.status === 'absent') { label = 'غياب'; colorClass = 'b-red'; }
-                else if(r.status === 'off') { label = 'Day Off'; colorClass = 'b-grey'; }
-                
+                let label = r.status === 'vacation' ? 'إجازة سنوي' : (r.status === 'sick' ? 'إجازة مرضي' : (r.status === 'absent' ? 'غياب' : 'Day Off'));
+                let colorClass = r.status === 'vacation' ? 'b-purple' : (r.status === 'sick' || r.status === 'absent' ? 'b-red' : 'b-grey');
                 statusBadge = `<span class="badge ${colorClass}">${label}</span>`;
                 details = `<td colspan="4" style="text-align:center; color:#7f8c8d;">-- ${label} --</td>`;
             }
@@ -464,24 +463,21 @@
         renderHistoryTable();
     }
 
-    // --- 3. التعديل (FIXED) ---
+    // --- 3. التعديل ---
     function openEditModal(id) {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
-        // تحويل id إلى رقم للتأكد من التطابق
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
         const record = allHistory.find(r => r.id === Number(id));
-        
-        if(!record) { alert("خطأ: لم يتم العثور على السجل"); return; }
+        if(!record) return;
 
         document.getElementById('editId').value = record.id;
         document.getElementById('editName').value = record.name;
         document.getElementById('editDate').value = record.date;
         document.getElementById('editStatus').value = record.status || 'working';
-        
         document.getElementById('editHours').value = record.hours;
         document.getElementById('editCalls').value = record.calls;
         document.getElementById('editNote').value = record.note;
 
-        toggleEditInputs(); // تفعيل/تعطيل الحقول حسب الحالة
+        toggleEditInputs();
         document.getElementById('editModal').style.display = 'flex';
     }
 
@@ -491,87 +487,72 @@
         const calls = document.getElementById('editCalls');
 
         if(status !== 'working') {
-            hours.disabled = true;
-            calls.disabled = true;
-            hours.style.background = '#eee';
-            calls.style.background = '#eee';
-            hours.value = 0;
-            calls.value = 0;
+            hours.disabled = true; calls.disabled = true;
+            hours.style.background = '#eee'; calls.style.background = '#eee';
+            hours.value = 0; calls.value = 0;
         } else {
-            hours.disabled = false;
-            calls.disabled = false;
-            hours.style.background = 'white';
-            calls.style.background = 'white';
+            hours.disabled = false; calls.disabled = false;
+            hours.style.background = 'white'; calls.style.background = 'white';
         }
     }
 
-    function closeModal() {
-        document.getElementById('editModal').style.display = 'none';
-    }
+    function closeModal() { document.getElementById('editModal').style.display = 'none'; }
 
     function saveEdit() {
-        // تحويل ID لرقم (FIX IMPORTANT)
         const id = Number(document.getElementById('editId').value);
         const status = document.getElementById('editStatus').value;
         const hours = parseFloat(document.getElementById('editHours').value) || 0;
         const calls = parseInt(document.getElementById('editCalls').value) || 0;
         const note = document.getElementById('editNote').value;
 
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
         const index = allHistory.findIndex(r => r.id === id);
         
         if(index !== -1) {
-            let required = 0;
-            let percent = 0;
-
+            let required = 0; let percent = 0;
             if (status === 'working') {
-                if (hours <= 0) { alert('يجب إدخال عدد ساعات للعمل'); return; }
+                if (hours <= 0) { alert('أدخل الساعات'); return; }
                 required = hours * TARGET_PER_HOUR;
                 percent = (calls / required) * 100;
             }
-
-            allHistory[index].status = status;
-            allHistory[index].hours = hours;
-            allHistory[index].calls = calls;
-            allHistory[index].required = required;
-            allHistory[index].percent = percent;
-            allHistory[index].note = note;
-
-            localStorage.setItem('teamProductivityDB_V3', JSON.stringify(allHistory));
-            
+            allHistory[index] = { ...allHistory[index], status, hours, calls, required, percent, note };
+            localStorage.setItem('teamProductivityDB_V4', JSON.stringify(allHistory));
             closeModal();
             renderHistoryTable();
             calculateAndRenderStats();
-            alert('تم تعديل السجل وحفظه بنجاح ✅');
-        } else {
-            alert('حدث خطأ أثناء الحفظ (السجل غير موجود)');
+            alert('تم التعديل ✅');
         }
     }
 
     function deleteRecord(id) {
-        if(confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) {
-            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        if(confirm('حذف هذا السجل؟')) {
+            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
             allHistory = allHistory.filter(r => r.id !== Number(id));
-            localStorage.setItem('teamProductivityDB_V3', JSON.stringify(allHistory));
+            localStorage.setItem('teamProductivityDB_V4', JSON.stringify(allHistory));
             renderHistoryTable();
             calculateAndRenderStats();
         }
     }
 
-    // --- 4. التقرير والتصدير ---
+    // --- 4. التقرير الشهري الذكي (Fixes) ---
     function calculateAndRenderStats() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        const selectedMonth = document.getElementById('reportMonth').value; // e.g., "2025-11"
         const tbody = document.getElementById('statsBody');
         tbody.innerHTML = '';
 
+        // فلترة البيانات بناءً على الشهر المختار
+        // نأخذ السجلات التي يبدأ تاريخها بالشهر المختار
+        const monthlyRecords = allHistory.filter(r => r.date.startsWith(selectedMonth));
+
         TEAM_NAMES.forEach(name => {
-            const records = allHistory.filter(r => r.name === name);
+            const records = monthlyRecords.filter(r => r.name === name);
+            
             if (records.length === 0) {
-                tbody.innerHTML += `<tr><td>${name}</td><td colspan="6" style="text-align:center; color:#999;">-</td></tr>`;
+                tbody.innerHTML += `<tr><td>${name}</td><td colspan="6" style="text-align:center; color:#ccc;">- لا توجد بيانات لهذا الشهر -</td></tr>`;
                 return;
             }
 
-            // حساب أيام العمل الفعلية فقط للإحصائيات
             const workRecords = records.filter(r => r.status === 'working');
             const leaveRecords = records.filter(r => r.status !== 'working');
 
@@ -580,13 +561,10 @@
             const totalHours = workRecords.reduce((sum, r) => sum + r.hours, 0);
             const totalCalls = workRecords.reduce((sum, r) => sum + r.calls, 0);
             const totalPercent = workRecords.reduce((sum, r) => sum + r.percent, 0);
-            
-            // المتوسط يحسب فقط على أيام العمل
             const avgPercent = daysWorked > 0 ? (totalPercent / daysWorked).toFixed(1) : 0;
 
             let badgeClass = avgPercent >= 100 ? 'b-green' : (avgPercent >= 85 ? 'b-orange' : 'b-red');
             let badgeText = avgPercent >= 100 ? 'ممتاز' : (avgPercent >= 85 ? 'جيد جداً' : 'ضعيف');
-            
             if(daysWorked === 0) { badgeClass = 'b-grey'; badgeText = 'لا يوجد عمل'; }
 
             tbody.innerHTML += `
@@ -603,31 +581,20 @@
         });
     }
 
-    function exportDailyToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
-        if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
-
-        let csvContent = "\uFEFF"; 
-        csvContent += "التاريخ,الاسم,الحالة,ساعات العمل,التارجت,المحقق,النسبة %,ملاحظات\n";
-
-        allHistory.forEach(r => {
-            let statusText = r.status === 'working' ? 'عمل' : (r.status === 'vacation' ? 'إجازة سنوي' : 'غياب/أخرى');
-            let row = `${r.date},${r.name},${statusText},${r.hours},${r.required},${r.calls},${r.percent ? r.percent.toFixed(1) : 0}%,${r.note}`;
-            csvContent += row + "\n";
-        });
-
-        downloadCSV(csvContent, "Daily_Productivity_Log.csv");
-    }
-
+    // تصدير إكسيل حسب الشهر المختار
     function exportMonthlyToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V3')) || [];
-        if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        const selectedMonth = document.getElementById('reportMonth').value;
+        const monthlyRecords = allHistory.filter(r => r.date.startsWith(selectedMonth));
+
+        if(monthlyRecords.length === 0) { alert('لا توجد بيانات لهذا الشهر للتصدير'); return; }
 
         let csvContent = "\uFEFF"; 
+        csvContent += `تقرير شهر ${selectedMonth}\n`;
         csvContent += "الاسم,أيام العمل,أيام الإجازات,إجمالي الساعات,إجمالي المكالمات,متوسط الأداء\n";
 
         TEAM_NAMES.forEach(name => {
-            const records = allHistory.filter(r => r.name === name);
+            const records = monthlyRecords.filter(r => r.name === name);
             if(records.length > 0) {
                 const workRecords = records.filter(r => r.status === 'working');
                 const daysWorked = workRecords.length;
@@ -642,7 +609,23 @@
             }
         });
 
-        downloadCSV(csvContent, "Monthly_Summary_Report.csv");
+        downloadCSV(csvContent, `Monthly_Report_${selectedMonth}.csv`);
+    }
+
+    function exportDailyToExcel() {
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
+
+        let csvContent = "\uFEFF"; 
+        csvContent += "التاريخ,الاسم,الحالة,ساعات العمل,التارجت,المحقق,النسبة %,ملاحظات\n";
+        allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        allHistory.forEach(r => {
+            let statusText = r.status === 'working' ? 'عمل' : (r.status === 'vacation' ? 'إجازة سنوي' : 'غياب/أخرى');
+            let row = `${r.date},${r.name},${statusText},${r.hours},${r.required},${r.calls},${r.percent ? r.percent.toFixed(1) : 0}%,${r.note}`;
+            csvContent += row + "\n";
+        });
+        downloadCSV(csvContent, "Full_History_Log.csv");
     }
 
     function downloadCSV(content, fileName) {
@@ -656,8 +639,8 @@
     }
 
     function clearAllData() {
-        if(confirm('تحذير: مسح جميع البيانات؟')) {
-            localStorage.removeItem('teamProductivityDB_V3');
+        if(confirm('⚠️ تحذير شديد: هل أنت متأكد من حذف جميع البيانات من النظام؟ (لا يمكن التراجع)')) {
+            localStorage.removeItem('teamProductivityDB_V4');
             location.reload();
         }
     }
