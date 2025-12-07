@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Productivity Pro - V4</title>
+    <title>Team Productivity Pro - Final</title>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -84,10 +84,10 @@
         button { cursor: pointer; border: none; border-radius: 5px; padding: 8px 15px; font-family: inherit; transition: 0.3s; font-weight: 600; }
         .btn-save { background-color: var(--primary); color: white; width: 100%; padding: 12px; margin-top: 20px; font-size: 1rem; }
         .btn-save:hover { background-color: #1a252f; }
-        .btn-reset { background-color: var(--red); color: white; font-size: 0.85rem; }
         .btn-filter { background-color: var(--accent); color: white; }
         .btn-excel-daily { background-color: var(--green); color: white; }
         .btn-excel-monthly { background-color: var(--purple); color: white; }
+        .btn-reset { background-color: #7f8c8d; color: white; } /* للإلغاء فقط */
         
         .action-btn { padding: 4px 8px; font-size: 0.9rem; margin-left: 5px; color: white; border-radius: 4px; }
         .edit-btn { background-color: var(--orange); }
@@ -126,7 +126,7 @@
 
 <div class="container">
     <header>
-        <h1>🚀 Productivity Tracker </h1>
+        <h1>🚀 Productivity Tracker</h1>
         <p>RETENTION TEAM</p>
     </header>
 
@@ -192,7 +192,7 @@
                     <option value="">كل الأسماء</option>
                 </select>
                 <button class="btn-filter" onclick="renderHistoryTable()">🔍 بحث</button>
-                <button class="btn-filter" onclick="resetFilter()" style="background:#7f8c8d">إلغاء</button>
+                <button class="btn-reset" onclick="resetFilter()">إلغاء الفلتر</button>
                 <button class="btn-excel-daily" onclick="exportDailyToExcel()">📥 تصدير السجل</button>
             </div>
         </div>
@@ -213,9 +213,6 @@
                 </thead>
                 <tbody id="historyBody"></tbody>
             </table>
-        </div>
-        <div style="margin-top: 20px; text-align: center;">
-            <button class="btn-reset" onclick="clearAllData()">⚠️ فرمتة النظام (حذف جميع البيانات نهائياً)</button>
         </div>
     </div>
 </div>
@@ -258,7 +255,7 @@
 
         <div class="modal-actions">
             <button class="btn-save" onclick="saveEdit()" style="margin:0">تحديث وحفظ</button>
-            <button class="btn-reset" onclick="closeModal()" style="background:#7f8c8d; margin:0">إلغاء</button>
+            <button class="btn-reset" onclick="closeModal()" style="margin:0">إلغاء</button>
         </div>
     </div>
 </div>
@@ -393,11 +390,11 @@
 
         if (!hasData) { alert('لم يتم إدخال أي بيانات!'); return; }
 
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
         allHistory = allHistory.filter(r => r.date !== date); 
         
         allHistory = [...allHistory, ...dailyRecords];
-        localStorage.setItem('teamProductivityDB_V4', JSON.stringify(allHistory));
+        localStorage.setItem('teamProductivityDB_Final', JSON.stringify(allHistory));
         
         alert('✅ تم الحفظ! سيتم تحديث التقارير.');
         renderEntryTable();
@@ -407,7 +404,7 @@
 
     // --- 2. الأرشيف ---
     function renderHistoryTable() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
         const filterDate = document.getElementById('filterDate').value;
         const filterName = document.getElementById('filterName').value;
         const tbody = document.getElementById('historyBody');
@@ -465,7 +462,7 @@
 
     // --- 3. التعديل ---
     function openEditModal(id) {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
         const record = allHistory.find(r => r.id === Number(id));
         if(!record) return;
 
@@ -505,7 +502,7 @@
         const calls = parseInt(document.getElementById('editCalls').value) || 0;
         const note = document.getElementById('editNote').value;
 
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
         const index = allHistory.findIndex(r => r.id === id);
         
         if(index !== -1) {
@@ -516,7 +513,7 @@
                 percent = (calls / required) * 100;
             }
             allHistory[index] = { ...allHistory[index], status, hours, calls, required, percent, note };
-            localStorage.setItem('teamProductivityDB_V4', JSON.stringify(allHistory));
+            localStorage.setItem('teamProductivityDB_Final', JSON.stringify(allHistory));
             closeModal();
             renderHistoryTable();
             calculateAndRenderStats();
@@ -526,23 +523,21 @@
 
     function deleteRecord(id) {
         if(confirm('حذف هذا السجل؟')) {
-            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+            let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
             allHistory = allHistory.filter(r => r.id !== Number(id));
-            localStorage.setItem('teamProductivityDB_V4', JSON.stringify(allHistory));
+            localStorage.setItem('teamProductivityDB_Final', JSON.stringify(allHistory));
             renderHistoryTable();
             calculateAndRenderStats();
         }
     }
 
-    // --- 4. التقرير الشهري الذكي (Fixes) ---
+    // --- 4. التقرير الشهري الذكي ---
     function calculateAndRenderStats() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
-        const selectedMonth = document.getElementById('reportMonth').value; // e.g., "2025-11"
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
+        const selectedMonth = document.getElementById('reportMonth').value; 
         const tbody = document.getElementById('statsBody');
         tbody.innerHTML = '';
 
-        // فلترة البيانات بناءً على الشهر المختار
-        // نأخذ السجلات التي يبدأ تاريخها بالشهر المختار
         const monthlyRecords = allHistory.filter(r => r.date.startsWith(selectedMonth));
 
         TEAM_NAMES.forEach(name => {
@@ -583,7 +578,7 @@
 
     // تصدير إكسيل حسب الشهر المختار
     function exportMonthlyToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
         const selectedMonth = document.getElementById('reportMonth').value;
         const monthlyRecords = allHistory.filter(r => r.date.startsWith(selectedMonth));
 
@@ -613,7 +608,7 @@
     }
 
     function exportDailyToExcel() {
-        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_V4')) || [];
+        let allHistory = JSON.parse(localStorage.getItem('teamProductivityDB_Final')) || [];
         if(allHistory.length === 0) { alert('لا توجد بيانات'); return; }
 
         let csvContent = "\uFEFF"; 
@@ -636,13 +631,6 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }
-
-    function clearAllData() {
-        if(confirm('⚠️ تحذير شديد: هل أنت متأكد من حذف جميع البيانات من النظام؟ (لا يمكن التراجع)')) {
-            localStorage.removeItem('teamProductivityDB_V4');
-            location.reload();
-        }
     }
 </script>
 
